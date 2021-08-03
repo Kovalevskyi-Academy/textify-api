@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "NULL",
+  "title": "NODE",
+  "description": "This is the smallest unit of the whole history. It contains content: text.",
+  "type": "object",
+  "properties": {
+    "nodeId": {
+      "description": "The unique identifier for a node",
+      "type": "string",
+      "minLength": 5
+    },
+    "nodeName": {
+      "description": "The name of a specific node.",
+      "type": "string"
+    },
+    "content": {
+      "description": "For now, only text. Is it formatted text?",
+      "type": "string"
+    },
+    "choices": {
+      "description": "The set of possible choices for that particular node. From zero or more.",
+      "type": "array",
+      "items": {
+        "description": "One specific choice that leads to a specific node.",
+        "type": "object", // "$ref": move to other schema
+        "properties": {
+          "locationNodeId": {
+            "description": "The node in which this choice is provided.",
+            "type": "string",
+            "minLength": 5
+          },
+          "destinationNodeId": {
+            "description": "The node to which the current selection leads.",
+            "type": "string",
+            "minLength": 5
+          },
+          "choiceText": {
+            "description": "Description of the essence of the choice in this node.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["locationNodeId", "destinationNodeId", "choiceText"]
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": ["nodeId", "nodeName", "content", "choices"]
+}
