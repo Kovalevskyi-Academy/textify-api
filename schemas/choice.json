@@ -1,18 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://model.choice.json",
-  "title": "Choice",
+  "title": "CHOICE",
   "type": "object",
   "properties": {
-    "nextNode": {
+    "locationNodeId": {
+      "description": "The node in which this choice is provided.",
+      "type": "string",
+      "minLength": 5
+    },
+    "destinationNodeId": {
       "description": "The node to which the current selection leads.",
-      "$ref": "node.json"
+      "type": "string",
+      "minLength": 5
     },
     "choiceText": {
-      "description": "Description of the essence of the choice.",
+      "description": "Description of the essence of the choice in this node.",
       "type": "string",
       "minLength": 1
+    },
+    "acceptingStatus": {
+      "description": "A mark indicating whether this option has been selected.",
+      "type": "boolean",
+      "default": false
     }
   },
-  "required": ["nextNodeId", "choiceText"]
+  "required": ["locationNodeId", "destinationNodeId", "choiceText", "acceptingStatus"]
 }

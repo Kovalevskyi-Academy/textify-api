@@ -1,14 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://model.node.json",
-  "title": "Node",
+  "title": "NODE",
   "description": "This is the smallest unit of the whole history. It contains content: text.",
   "type": "object",
   "properties": {
-    "nodeTitle": {
-      "description": "The author's identifier for a node",
+    "nodeId": {
+      "description": "The unique identifier for a node",
       "type": "string",
-      "minLength": 2
+      "minLength": 5
+    },
+    "nodeName": {
+      "description": "The name of a specific node.",
+      "type": "string"
     },
     "content": {
       "description": "For now, only text. Is it formatted text?",
@@ -22,7 +26,12 @@
       },
       "minItems": 0,
       "uniqueItems": true
+    },
+    "status": {
+      "description": "Speaks about the stage of interaction with the reader.",
+      "type": "string",
+      "enum": ["CLOSE", "IN PROGRESS", "FINISH OR THE CHOICE HASE BEEN MADE"]
     }
   },
-  "required": ["nodeId", "nodeName", "content", "choices"]
+  "required": ["nodeId", "nodeName", "content", "choices", "status"]
 }
