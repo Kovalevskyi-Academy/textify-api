@@ -18,7 +18,12 @@
       "description": "Description of the essence of the choice in this node.",
       "type": "string",
       "minLength": 1
+    },
+    "acceptingStatus": {
+      "description": "A mark indicating whether this option has been selected.",
+      "type": "boolean",
+      "default": false
     }
   },
-  "required": ["locationNodeId", "destinationNodeId", "choiceText"]
+  "required": ["locationNodeId", "destinationNodeId", "choiceText", "acceptingStatus"]
 }
