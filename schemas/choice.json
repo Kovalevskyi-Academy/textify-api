@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://model.choice.json",
+  "title": "CHOICE",
+  "type": "object",
+  "properties": {
+    "nextNode": {
+      "description": "The node to which the current selection leads.",
+      "$ref": "node.json"
+    },
+    "choiceText": {
+      "description": "Description of the essence of the choice.",
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": ["nextNode", "choiceText"]
+}

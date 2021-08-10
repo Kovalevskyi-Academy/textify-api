@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://model.node.json",
+  "title": "NODE",
+  "description": "This is the smallest unit of the whole history. It contains content: text.",
+  "type": "object",
+  "properties": {
+    "nodeTitle": {
+      "description": "The name the author gave to the node.",
+      "type": "string"
+    },
+    "content": {
+      "description": "For now, only text. Is it formatted text?",
+      "type": "string"
+    },
+    "choices": {
+      "description": "The set of possible choices for that particular node. From zero or more.",
+      "type": "array",
+      "items": {
+        "$ref": "choice.json"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": ["nodeTitle", "content"]
+}
