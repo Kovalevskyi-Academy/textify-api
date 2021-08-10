@@ -5,13 +5,8 @@
   "description": "This is the smallest unit of the whole history. It contains content: text.",
   "type": "object",
   "properties": {
-    "nodeId": {
-      "description": "The unique identifier for a node",
-      "type": "string",
-      "minLength": 5
-    },
-    "nodeName": {
-      "description": "The name of a specific node.",
+    "nodeTitle": {
+      "description": "The name the author gave to the node.",
       "type": "string"
     },
     "content": {
@@ -26,12 +21,7 @@
       },
       "minItems": 0,
       "uniqueItems": true
-    },
-    "status": {
-      "description": "Speaks about the stage of interaction with the reader.",
-      "type": "string",
-      "enum": ["CLOSE", "IN PROGRESS", "FINISH OR THE CHOICE HASE BEEN MADE"]
     }
   },
-  "required": ["nodeId", "nodeName", "content", "choices", "status"]
+  "required": ["nodeTitle", "content"]
 }
