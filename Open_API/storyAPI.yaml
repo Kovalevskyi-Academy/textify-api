@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Interactive Text Games
+  description: "Тут должно быть некое описание чисто API!"
+  license:
+    name: MIT?
+    url: our license
+  version: 1.0.0
+
+servers:
+  - url: 'https://itg.io'
+  - url: 'http://itg.io'
+paths:
+  /stories:
+    get:
+      summary: Returns a list of all storyes.
+      description: "А тут должно быть подгружено, детальное описание истории как сущности, из файла"
+#      parameters:
+#        - name: limit
+#          in: query
+#          description: 'How many items to return at one time'
+#          required: false
+#          schema:
+#            type: integer
+#            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "../schemas/story.json"
+        '400':
+          description: NOT FOUND
+          content: {}
+
