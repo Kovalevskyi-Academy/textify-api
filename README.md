@@ -19,7 +19,13 @@
 
 Истории можно будет покупать и создавать.
 
-## Модель
+## Описание идеи
 
 Предварительная
 модель [тут](https://docs.google.com/document/d/1ckahubIW_SVBNAnv93yaYD75iNJW3b6BHZ1Sigx7vDo/edit#).
+
+## API (Open API, swagger)
+
+See API [here](./Open_API/storyAPI.yaml).
+
+Use a [Swagger plugin](https://plugins.jetbrains.com/plugin/8347-swagger).

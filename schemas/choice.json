@@ -4,9 +4,9 @@
   "title": "CHOICE",
   "type": "object",
   "properties": {
-    "nextNode": {
+    "titleOfNextNode": {
       "description": "The node to which the current selection leads.",
-      "$ref": "node.json"
+      "type": "string"
     },
     "choiceText": {
       "description": "Description of the essence of the choice.",
