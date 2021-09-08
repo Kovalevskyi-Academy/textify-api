@@ -1,18 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://model.choice.json",
   "title": "CHOICE",
   "type": "object",
   "properties": {
-    "titleOfNextNode": {
-      "description": "The node to which the current selection leads.",
-      "type": "string"
-    },
     "choiceText": {
       "description": "Description of the essence of the choice.",
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "example": "Current Pick: Take a Cockroach Assfucking Journey!"
+    },
+    "nextNodeId": {
+      "description": "Unique identifier of next Node.",
+      "type": "string",
+      "minLength": 1,
+      "example": "node01"
     }
   },
-  "required": ["nextNode", "choiceText"]
+  "required": ["nextNodeId", "choiceText"]
 }
