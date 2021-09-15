@@ -16,29 +16,6 @@ paths:
     get:
       summary: "Returns a list of all story's."
       description: "List contains som information about each story."
-      parameters:
-        - name: storyLimit
-          in: query
-          description: "Limit on the number of story's returned."
-          required: false
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-            default: 5
-            example: 5
-        - name: pageLimit
-          in: query
-          description: "The limit on the number of pages returned."
-          required: false
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 10
-            default: 1
-            example: 2
       responses:
         200:
           description: "The answer is an array, each element of which is a dataset of any available story."
