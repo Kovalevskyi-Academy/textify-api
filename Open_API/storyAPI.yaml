@@ -9,7 +9,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://api.textify.me
+  - url: https://api.textify.me/v1
     description: The server providing the API.
 paths:
   /stories:
