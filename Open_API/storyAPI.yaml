@@ -86,7 +86,7 @@ paths:
               schema:
                 $ref: '../schemas/Error.json'
 
-  /stories/{storyId}/{nodeId}:
+  /stories/{storyId}/nodes/{nodeId}:
     get:
       summary: "Get one specified node from the specified story."
       description: "..."
