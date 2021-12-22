@@ -1,0 +1,13 @@
+#ignore files
+*.md
+*.iml
+.gitignore
+
+#ignore folders
+*/experiments
+.git
+*/.git
+.idea
+*/.idea
+*/tmp*
+*/src

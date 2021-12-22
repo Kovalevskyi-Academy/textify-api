@@ -1,3 +1,11 @@
+# folders
+*/.idea
+*/target
+experiments/
+/api/target/
 /.idea/
-/target/
-/experiments/
+
+
+# files
+*.iml
+.DS_Store
