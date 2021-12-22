@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: Interactive Text Games
+  description: 'Here you can interact with interactive text games through HTTP requests.'
+  termsOfService: https://docs.google.com/document/d/1ckahubIW_SVBNAnv93yaYD75iNJW3b6BHZ1Sigx7vDo/
+  license:
+    name: MIT
+    url: https://github.com/Kovalevskyi-Academy/itg/blob/main/LICENSE
+  version: 1.0.0
+
+servers:
+  - url: https://api.textify.me/v1
+    description: The server providing the API.
+paths:
+  /stories:
+    get:
+      summary: "Returns a list of all story's."
+      description: "List contains som information about each story."
+      responses:
+        200:
+          description: "The answer is an array, each element of which is a dataset of any available story."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    storyId:
+                      type: string
+                      example: "story00"
+                    storyTitle:
+                      type: string
+                      example: "It is a long test story"
+                    storyDescription:
+                      description: Description of each story.
+                      type: string
+                      example: "This is an action-packed story about the journey of an elephant in the ass of a cockroach!"
+  /stories/{storyId}:
+    get:
+      summary: "Get a only one full story object."
+      description: "..."
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: "Unique identifier of some story."
+          schema:
+            type: string
+            minLength: 1
+            example: "story00"
+
+      responses:
+        200:
+          description: "Only if this story is present."
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/story.json'
+        404:
+          description: "There is no story with the specified ID."
+          content:
+            aplication/json:
+              schema:
+                $ref: '../schemas/Error.json'
+
+  /stories/{storyId}/nodes/{nodeId}:
+    get:
+      summary: "Get one specified node from the specified story."
+      description: "..."
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: "Unique identifier of some story."
+          schema:
+            type: string
+            minLength: 1
+            example: "story00"
+        - name: nodeId
+          in: path
+          required: true
+          description: "Unique identifier of specified node from the specified story."
+          schema:
+            type: string
+            minLength: 1
+            example: "node00"
+      responses:
+        200:
+          description: "Only if this specified node is present in specified story."
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/node.json'
+        404:
+          description: "There is no node with the specified ID."
+          content:
+            aplication/json:
+              schema:
+                $ref: '../schemas/Error.json'

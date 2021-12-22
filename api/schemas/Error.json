@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Request error",
+  "type": "object",
+  "description": "A generic error object resulting from an API call.",
+  "properties": {
+    "message": {
+      "description": "This message tells you exactly what went wrong.",
+      "type": "string",
+      "minLength": 9,
+      "example": "What you are looking for is not here!"
+    }
+  },
+  "required": ["message"]
+}
