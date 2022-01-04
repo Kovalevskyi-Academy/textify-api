@@ -13,7 +13,7 @@ Just visit:
 - curl http://localhost:8080/
 - curl http://localhost:8080/messages/
 - curl http://localhost:8080/messages/1
-- POST http://localhost:8080/messages/ JSON: {"id":-1, "message": "Some message"}
+- curl -X POST -H "Content-Type: application/json" -d '{"id":-1, "message": "Some message"}' http://localhost:8080/messages/ 
 
 **But is better to use something like `Advanced REST Client`.**
 

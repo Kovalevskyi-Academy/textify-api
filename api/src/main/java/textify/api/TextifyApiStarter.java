@@ -24,7 +24,7 @@ public class TextifyApiStarter {
     return (args) -> {
       repo.deleteAll();
       var firstEntity = new Message(-1L, "ONE TEST MESSAGE:" + UUID.randomUUID());
-      var actualFirstMessage= repo.save(firstEntity);
+      var actualFirstMessage = repo.save(firstEntity);
       //System.out.println("FIRST ENTITY: " + actualFirstMessage);
       repo.save(new Message(-1L, "SECOND TEST MESSAGE:" + UUID.randomUUID()
           + "trololo"));
