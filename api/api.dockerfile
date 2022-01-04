@@ -21,7 +21,7 @@ COPY ${DEPENDENCY}/META-INF /app/META-INF
 COPY ${DEPENDENCY}/module-info.class /app
 COPY ${DEPENDENCY}/BOOT-INF/classes /app
 
-# 2. Тут мы копируем слои докера, в еоторые было превращено приложение самой джавой!
+# 2. Тут мы копируем слои докера, в которые было превращено приложение самой джавой!
 # required a command `mkdir -p target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted`
 #ARG EXTRACTED=target/extracted
 #COPY ${EXTRACTED}/dependencies/ ./
