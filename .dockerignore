@@ -2,6 +2,7 @@
 *.md
 *.iml
 .gitignore
+*.mk
 
 #ignore folders
 */experiments

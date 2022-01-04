@@ -1,0 +1,59 @@
+timeout: 120s
+
+options:
+  dynamic_substitutions: true
+  substitution_option: 'ALLOW_LOOSE'
+
+substitutions:
+  _REGION: 'europe-docker.pkg.dev'
+  _ARTIFACT_FOLDER: 'gs://prod-rest_cloudbuild/api-rest'
+  # $REPO_NAME means GitHub's repo name. It will be container name
+  # $SHORT_SHA is a part of hash of commit. It will be container tag.
+  _COMMIT_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:${SHORT_SHA}'
+  _LATEST_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:latest'
+
+steps:
+  # проверяем структуру директорий
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'find'
+
+  # собственно собираем джарник
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    entrypoint: 'mvn'
+    args: ['package', '-Dmaven.test.skip=true']
+    dir: 'api'
+  # распаковываем джарник
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    entrypoint: 'bash'
+    args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
+    dir: 'api'
+  # пулим старый контейнер, если он есть
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
+    dir: 'api'
+
+#  #проверяем структуру директорий
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'find'
+#    dir: 'api'
+
+  # билдим контейнер используя кэш спуленного ранее контейнера,
+  # на основе указанного докерфайла
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build',
+           '-t', '${_COMMIT_TAG}',
+           '-t', '${_LATEST_TAG}',
+           '--cache-from', '${_LATEST_TAG}',
+           '-f', 'api.dockerfile',
+           '.']
+    dir: 'api'
+
+artifacts:
+  objects:
+    location: '${_ARTIFACT_FOLDER}'
+    paths: ['./api/target/a*.jar']
+
+images:
+  - '${_COMMIT_TAG}'
+  - '${_LATEST_TAG}'
