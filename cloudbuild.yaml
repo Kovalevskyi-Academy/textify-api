@@ -1,0 +1,40 @@
+timeout: 120s
+
+options:
+  dynamic_substitutions: true
+  substitution_option: 'ALLOW_LOOSE'
+substitutions:
+  _REGION: 'europe-docker.pkg.dev'
+  _ARTIFACT_FOLDER: 'gs://prod-rest_cloudbuild/api-rest'
+  # $REPO_NAME means GitHub's repo name. It will be container name
+  # $SHORT_SHA is a part of hash of commit. It will be container tag.
+  _COMMIT_TAG: '${_REGION}/${PROJECT_ID}/test-google-cloud-build/${REPO_NAME}:${SHORT_SHA}'
+  _LATEST_TAG: '${_REGION}/${PROJECT_ID}/test-google-cloud-build/${REPO_NAME}:latest'
+
+steps:
+  # собственно собираем джарник
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    entrypoint: 'mvn'
+    args: ['package', '-Dmaven.test.skip=true']
+    dir: 'itg/api'
+  # пулим старый контейнер, если он есть
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
+  # билдим контейнер используя кэш спуленного ранее контейнера,
+  # на основе указанного докерфайла
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build',
+           '-t', '${_COMMIT_TAG}',
+           '-t', '${_LATEST_TAG}',
+           '--cache-from', '${_LATEST_TAG}',
+           '-f', './textify-api/api/api.dockerfile',
+           './api/']
+artifacts:
+  objects:
+    location: '${_ARTIFACT_FOLDER}'
+    paths: ['./textify-api/api/target/ap*.jar']
+
+images:
+  - '${_COMMIT_TAG}'
+  - '${_LATEST_TAG}'
