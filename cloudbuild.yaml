@@ -13,33 +13,33 @@ substitutions:
   _LATEST_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:latest'
 
 steps:
-  # проверяем структуру директорий
+#  # Проверяем структуру директорий, для отладки
 #  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
 #    entrypoint: 'find'
 
-  # собственно собираем джарник
+  # Собираем джарник.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'mvn'
     args: ['package', '-Dmaven.test.skip=true']
     dir: 'api'
-  # распаковываем джарник
+  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'bash'
     args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
     dir: 'api'
-  # пулим старый контейнер, если он есть
+  # Пулим старый контейнер, если он есть.
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
     dir: 'api'
 
-#  #проверяем структуру директорий
+#  # Проверяем структуру директорий, для отладки.
 #  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
 #    entrypoint: 'find'
 #    dir: 'api'
 
-  # билдим контейнер используя кэш спуленного ранее контейнера,
-  # на основе указанного докерфайла
+  # Билдим контейнер используя кэш спуленного ранее контейнера,
+  # на основе указанного докерфайла.
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build',
            '-t', '${_COMMIT_TAG}',
