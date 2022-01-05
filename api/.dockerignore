@@ -1,14 +1,17 @@
-#ignore files
+# Ignore files
 *.md
 *.iml
 .gitignore
 *.mk
+*.dockerfile
+Dockerfile
 
-#ignore folders
-*/experiments
-.git
-*/.git
-.idea
-*/.idea
-*/tmp*
-*/src
+# Ignore folders
+.git/
+.idea/
+tmp*
+src/
+target/
+
+# Folders not ignored
+! target/dependency/
