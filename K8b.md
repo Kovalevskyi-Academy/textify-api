@@ -4,5 +4,5 @@
     Это вообще очень классная статья для понимания самого докера.
    - Вторая часть: https://habr.com/ru/company/ruvds/blog/438984/
    - Туториал гугла от А до Я: https://ide.cloud.google.com/?walkthrough_tutorial_id=gke_cloud_code_create_app
-   - Еще гайд от гугла: https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview
+   - Еще гайд от гугла: https://cloud.google.com/kubernetes-engine/docs/quickstart
 
