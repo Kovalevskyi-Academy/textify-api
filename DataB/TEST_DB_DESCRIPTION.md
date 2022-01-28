@@ -32,7 +32,7 @@ You can connect to this container: `docker exec -it postgres sh`
    postgres: `kubectl apply -f ./k8b/pg-config.yaml -f ./k8b/pg-deploy.yaml -f ./k8b/pg-service.yaml`
 2. Connect local machine to pg-pod:
     - check the port 5432, is it free? Should be free!
-    - do port forwarding: `kubectl port-forward pg-7f5ddcd6-v48pp 5432:5432`
+    - do port forwarding: `kubectl port-forward PG_POD_NAME 5432:5432`
     - connect: `psql -U testUSER -d testDB -h 0.0.0.0`
 3. Зайти в контейнер в поде:
     - 1 контейнер в поде: `kubectl exec -it POD_NAME -- /bin/sh`
