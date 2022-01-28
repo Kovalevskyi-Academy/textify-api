@@ -1,16 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pg-service
+  name: postgres
   labels:
     app: pg
 spec:
   type: ClusterIP
   clusterIP: None
-  ports:
-    - name: postgres
-      port: 5432
-      #targetPort: 5432
   selector:
     app: pg
+  ports:
+    - name: db
+      port: 5432
+      #targetPort: 5432
+
 

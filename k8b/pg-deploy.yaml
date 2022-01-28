@@ -2,11 +2,13 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pg
+  labels:
+    app: pg
 spec:
   selector:
     matchLabels:
       app: pg
-  serviceName: pg-service
+  serviceName: postgres
   #minReadySeconds: 10 # Kubernetes v1.23 [beta]
   replicas: 1
   revisionHistoryLimit: 2
@@ -21,7 +23,7 @@ spec:
           image: postgres:14.1-alpine3.15
           imagePullPolicy: IfNotPresent
           ports:
-            - name: postgres
+            - name: db
               containerPort: 5432
           resources:
             requests:

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest-api
+  labels:
+    app: rest-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: rest-api
+  ports:
+    - name: api
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
