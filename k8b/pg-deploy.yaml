@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pg
+spec:
+  selector:
+    matchLabels:
+      app: pg
+  serviceName: pg-service
+  #minReadySeconds: 10 # Kubernetes v1.23 [beta]
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: pg
+    spec:
+      terminationGracePeriodSeconds: 20
+      containers:
+        - name: pg #DNS_LABLE
+          image: postgres:14.1-alpine3.15
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              cpu: 100m # one hundred millicores or millicpu
+              memory: 100Mi
+              ephemeral-storage: 100Mi
+            limits:
+              cpu: 300m
+              memory: 250Mi
+              ephemeral-storage: 250Mi
+          envFrom:
+            - configMapRef:
+                name: pg-config
