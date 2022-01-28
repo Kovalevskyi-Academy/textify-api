@@ -21,7 +21,8 @@ spec:
           image: postgres:14.1-alpine3.15
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5432
+            - name: postgres
+              containerPort: 5432
           resources:
             requests:
               cpu: 100m # one hundred millicores or millicpu

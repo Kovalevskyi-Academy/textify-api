@@ -5,10 +5,12 @@ metadata:
   labels:
     app: pg
 spec:
+  type: ClusterIP
+  clusterIP: None
   ports:
-    - port: 5432
-      name: db
+    - name: postgres
+      port: 5432
       #targetPort: 5432
   selector:
     app: pg
-  clusterIP: None
+
