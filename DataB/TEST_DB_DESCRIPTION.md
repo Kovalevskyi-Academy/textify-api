@@ -37,6 +37,9 @@ You can connect to this container: `docker exec -it postgres sh`
 3. Зайти в контейнер в поде:
     - 1 контейнер в поде: `kubectl exec -it POD_NAME -- /bin/sh`
     - много контейнеров в поде: ` kubectl exec -it POD_NAME --container CONTAINER_NAME -- /bin/sh`
+4. Как проверить диск для базы:
+    - Смотрим создан ли диск: `kubectl get pvc`
+    - Подключаемся к контейнеру и смотрим содержимое PGDATA: `kubectl exec -it pg-0 -- /bin/sh -c 'ls $PGDATA'`
 
 
 

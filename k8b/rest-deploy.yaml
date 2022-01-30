@@ -27,11 +27,9 @@ spec:
             requests:
               cpu: 200m
               memory: 250Mi
-              ephemeral-storage: 100Mi
             limits:
               cpu: 400m
               memory: 300Mi
-              ephemeral-storage: 100Mi
           envFrom:
             - configMapRef:
                 name: pg-config

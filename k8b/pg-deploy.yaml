@@ -29,11 +29,20 @@ spec:
             requests:
               cpu: 100m # one hundred millicores or millicpu
               memory: 100Mi
-              ephemeral-storage: 100Mi
             limits:
               cpu: 300m
               memory: 250Mi
-              ephemeral-storage: 250Mi
           envFrom:
             - configMapRef:
                 name: pg-config
+          volumeMounts:
+            - name: pg-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: pg-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Mi

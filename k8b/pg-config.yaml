@@ -9,4 +9,4 @@ data:
   POSTGRES_DB: testDB
   POSTGRES_USER: testUSER
   POSTGRES_PASSWORD: testPASSWORD
-  #PGDATA: /data/pgdata
+  PGDATA: /data/pgdata
