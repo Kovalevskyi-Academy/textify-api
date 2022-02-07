@@ -1,4 +1,4 @@
-timeout: 120s
+timeout: 150s
 
 options:
   dynamic_substitutions: true
@@ -20,7 +20,6 @@ steps:
     entrypoint: 'mvn'
     args: [ 'validate' ]
     dir: 'api'
-
   # Unit тесты
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'mvn'
@@ -29,9 +28,12 @@ steps:
   # Собираем джарник.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'mvn'
-    args: ['package']
-#    args: ['package', '-Dmaven.test.skip=true']
+    args: ['package', '-Dmaven.test.skip=true']
     dir: 'api'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    args: [ 'gsutil', 'cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar' ]
+    dir: 'api'
+
   # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'bash'
@@ -42,7 +44,6 @@ steps:
     entrypoint: 'bash'
     args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
     dir: 'api'
-
   # Билдим контейнер используя кэш спуленного ранее контейнера,
   # на основе указанного докерфайла.
   - name: 'gcr.io/cloud-builders/docker'
@@ -54,10 +55,7 @@ steps:
            '.']
     dir: 'api'
 
-artifacts:
-  objects:
-    location: '${_ARTIFACT_FOLDER}'
-    paths: ['./api/target/a*.jar']
+
 
 images:
   - '${_COMMIT_TAG}'
