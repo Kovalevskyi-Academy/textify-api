@@ -14,10 +14,23 @@ substitutions:
 
 steps:
 
+
+  # Валидация кода
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    entrypoint: 'mvn'
+    args: [ 'validate' ]
+    dir: 'api'
+
+  # Unit тесты
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    entrypoint: 'mvn'
+    args: [ 'test' ]
+    dir: 'api'
   # Собираем джарник.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
     entrypoint: 'mvn'
-    args: ['package', '-Dmaven.test.skip=true']
+    args: ['package']
+#    args: ['package', '-Dmaven.test.skip=true']
     dir: 'api'
   # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
