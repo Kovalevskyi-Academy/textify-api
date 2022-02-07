@@ -30,8 +30,10 @@ steps:
     entrypoint: 'mvn'
     args: ['package', '-Dmaven.test.skip=true']
     dir: 'api'
+  # Засовываем джарник в хранилище
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-    args: [ 'gsutil', 'cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar' ]
+    entrypoint: 'gsutil'
+    args: ['cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar']
     dir: 'api'
 
   # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
