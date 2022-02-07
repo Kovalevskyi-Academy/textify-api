@@ -23,7 +23,6 @@
 7. Группы и варианты API
    Kubernetes: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#-strong-api-groups-strong-
 8. Базовая документация:
-    -
-    Stateless https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/
+    - Stateless https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/
     - Stateful https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/
 9. Я уже перечитал тонну статей и слепил из них что-то...

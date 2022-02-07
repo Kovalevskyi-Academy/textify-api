@@ -13,9 +13,6 @@ substitutions:
   _LATEST_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:latest'
 
 steps:
-#  # Проверяем структуру директорий, для отладки
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'find'
 
   # Собираем джарник.
   - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
@@ -32,11 +29,6 @@ steps:
     entrypoint: 'bash'
     args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
     dir: 'api'
-
-#  # Проверяем структуру директорий, для отладки.
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'find'
-#    dir: 'api'
 
   # Билдим контейнер используя кэш спуленного ранее контейнера,
   # на основе указанного докерфайла.

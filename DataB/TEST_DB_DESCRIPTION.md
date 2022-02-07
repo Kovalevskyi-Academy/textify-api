@@ -41,5 +41,8 @@ You can connect to this container: `docker exec -it postgres sh`
     - Смотрим создан ли диск: `kubectl get pvc`
     - Подключаемся к контейнеру и смотрим содержимое PGDATA: `kubectl exec -it pg-0 -- /bin/sh -c 'ls $PGDATA'`
 
+5. Проблемы с проверкой жизни БД https://github.com/kubernetes/kubernetes/issues/40846
+6. Какой командой проверить PostgreSQL после запуска в K8b: `kubectl exec -it pg-0 -- /bin/sh -c 'pgbench -i -U $POSTGRES_USER -d $POSTGRES_DB'`
+
 
 
