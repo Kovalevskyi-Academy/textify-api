@@ -42,13 +42,13 @@ steps:
     args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
     dir: 'api'
   # Пулим старый контейнер, если он есть.
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
+  - name: 'docker:20.10.12-alpine3.15'
+    entrypoint: 'sh'
     args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
     dir: 'api'
   # Билдим контейнер используя кэш спуленного ранее контейнера,
   # на основе указанного докерфайла.
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'docker:20.10.12-alpine3.15'
     args: ['build',
            '-t', '${_COMMIT_TAG}',
            '-t', '${_LATEST_TAG}',
