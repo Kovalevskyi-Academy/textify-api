@@ -5,12 +5,12 @@ options:
   substitution_option: 'ALLOW_LOOSE'
 
 substitutions:
+  # Reg for docker artifacts
   _REGION: 'europe-docker.pkg.dev'
+  # Place to save jar
   _ARTIFACT_FOLDER: 'gs://prod-rest_cloudbuild/api-rest'
   # $REPO_NAME means GitHub's repo name. It will be container name
-  # $SHORT_SHA is a part of hash of commit. It will be container tag.
-  _COMMIT_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:${SHORT_SHA}'
-  _LATEST_TAG: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}:latest'
+  _IMAGE: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}'
 
 steps:
 
@@ -44,21 +44,20 @@ steps:
   # Пулим старый контейнер, если он есть.
   - name: 'docker:20.10.12-alpine3.15'
     entrypoint: 'sh'
-    args: ['-c', 'docker pull ${_LATEST_TAG} || exit 0']
+    args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
     dir: 'api'
   # Билдим контейнер используя кэш спуленного ранее контейнера,
   # на основе указанного докерфайла.
   - name: 'docker:20.10.12-alpine3.15'
     args: ['build',
-           '-t', '${_COMMIT_TAG}',
-           '-t', '${_LATEST_TAG}',
-           '--cache-from', '${_LATEST_TAG}',
+      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
+           '-t', '${_IMAGE}:${SHORT_SHA}',
+           '-t', '${_IMAGE}:latest',
+           '--cache-from', '${_IMAGE}:latest',
            '-f', 'api.dockerfile',
            '.']
     dir: 'api'
-
-
-
-images:
-  - '${_COMMIT_TAG}'
-  - '${_LATEST_TAG}'
+  # Push image to artifact registry
+  - name: 'docker:20.10.12-alpine3.15'
+    args: [ 'push', '--all-tags', '${_IMAGE}']
+    dir: 'api'
