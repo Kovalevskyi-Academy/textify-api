@@ -1,4 +1,4 @@
-timeout: 150s
+#timeout: 150s
 
 options:
   dynamic_substitutions: true
@@ -61,3 +61,13 @@ steps:
   - name: 'docker:20.10.12-alpine3.15'
     args: [ 'push', '--all-tags', '${_IMAGE}']
     dir: 'api'
+
+  # Kubernetes RUN DB
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args: ['run',
+           '--filename', './k8b/db/',
+           '--location', 'europe-north1',
+           '--cluster', 'my-autopilot-cluster']
+#  - name: 'bitnami/kubectl:latest'
+#    entrypoint: 'bash'
+#    args: ['-c',]

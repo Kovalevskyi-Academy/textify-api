@@ -51,8 +51,8 @@ Run without de-touch mode & watch errors: `make -f api.mk test`
 - CPU min: 0.2, max: ~0.4 (это ограничение тормозит старт приложения)
 
 1. Deploy postgres
-   first: `kubectl apply -f ./k8b/pg-config.yaml -f ./k8b/pg-deploy.yaml -f ./k8b/pg-service.yaml`
-2. Deploy rest-api: `kubectl apply -f ./k8b/rest-deploy.yaml -f ./k8b/rest-service.yaml`
+   first: `kubectl apply -f ./k8b/db/pg-config.yaml -f ./k8b/db/pg-deploy.yaml -f ./k8b/db/pg-service.yaml`
+2. Deploy rest-api: `kubectl apply -f ./k8b/rest/rest-deploy.yaml -f ./k8b/rest/rest-service.yaml`
 3. Connect local machine to API:
     - Do port forwarding: `kubectl port-forward API_POD_NAME 8080:8080`
     - GET localhost:8080

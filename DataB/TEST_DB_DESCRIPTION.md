@@ -28,8 +28,9 @@ You can connect to this container: `docker exec -it postgres sh`
 - RAM min: 100, max: 250
 - CPU min: 0.1, max: 0.3 (это ограничение тормозит старт приложения)
 
-1. Deploy only
-   postgres: `kubectl apply -f ./k8b/pg-config.yaml -f ./k8b/pg-deploy.yaml -f ./k8b/pg-service.yaml`
+1. Deploy & delete:
+    - only postgres: `kubectl apply -f ./k8b/db/pg-config.yaml -f ./k8b/db/pg-deploy.yaml -f ./k8b/db/pg-service.yaml`
+    - delete all objects: `kubectl delete -f ./k8b/ -R`
 2. Connect local machine to pg-pod:
     - check the port 5432, is it free? Should be free!
     - do port forwarding: `kubectl port-forward PG_POD_NAME 5432:5432`
