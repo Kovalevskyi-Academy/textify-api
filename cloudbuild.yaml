@@ -5,14 +5,8 @@ options:
   substitution_option: 'ALLOW_LOOSE'
 
 substitutions:
-  # Reg for docker artifacts
-  _REGION: 'europe-docker.pkg.dev'
-  # Place to save jar
-  _ARTIFACT_FOLDER: 'gs://prod-rest_cloudbuild/api-rest'
   # $REPO_NAME means GitHub's repo name. It will be container name
-  _IMAGE: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}'
-  _PG_USER: 'testUSER'
-  _PG_DB: 'testDB'
+  _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
 
 steps:
 
@@ -35,7 +29,7 @@ steps:
 #  # Засовываем джарник в хранилище
 #  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
 #    entrypoint: 'gsutil'
-#    args: ['cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar']
+#    args: ['cp', 'target/a*.jar', 'gs://prod-rest_cloudbuild/api-rest/a*.jar']
 #    dir: 'api'
 #
 #  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
@@ -76,4 +70,11 @@ steps:
     args: [ 'exec',
             '-it', 'pg-0',
             '--', '/bin/sh',
-            '-c', 'pgbench -i -U ${_PG_USER} -d ${_PG_DB}']
+            '-c', 'pgbench -i -U testUSER -d testDB'] # TODO fix security!
+
+
+
+  # Delete Db from cluster
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    entrypoint: 'kubectl'
+    args: ['delete', '--filename', './k8b/db/']
