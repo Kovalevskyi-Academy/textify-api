@@ -66,16 +66,16 @@ steps:
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
-  # Little sleep before start tests
-  - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'waiting-for-DB'
-    waitFor: ['deploy-db']
-    entrypoint: 'kubectl'
-    args: ['get', 'pod']
+#  # Little sleep before start tests
+#  - name: 'gcr.io/cloud-builders/gke-deploy'
+#    id: 'waiting-for-DB'
+#    waitFor: ['deploy-db']
+#    entrypoint: 'kubectl'
+#    args: ['get', 'pod']
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: 'test-db'
-    waitFor: ['waiting-for-DB']
+    waitFor: ['deploy-db']
     entrypoint: 'bash'
     args:
       - '-c'
