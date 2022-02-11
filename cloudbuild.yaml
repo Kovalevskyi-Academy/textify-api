@@ -7,6 +7,7 @@ options:
 substitutions:
   # $REPO_NAME means GitHub's repo name. It will be container name
   _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
+  _PG_POD_NAME: ''
 
 steps:
 
@@ -60,26 +61,68 @@ steps:
 
   # Kubernetes RUN DB
   - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'deploy-db'
     args: ['run',
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
+  # Little sleep before start tests
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'waiting-for-DB'
+    waitFor: ['deploy-db']
+    entrypoint: 'kubectl'
+    args: ['get', 'pod']
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    entrypoint: 'kubectl'
-    args: [ 'exec',
-            '-it', 'pg-0',
-            '--', '/bin/sh',
-            '-c', 'pgbench -i -U testUSER -d testDB'] # TODO fix security!
+    id: 'test-db'
+    waitFor: ['waiting-for-DB']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+         pg_pod_name=$(kubectl get pod --selector=app=pg -o jsonpath={.items..metadata.name})
+         kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
+    # TODO fix security!
+
+#  # Run REST-API
+#  - name: 'gcr.io/cloud-builders/gke-deploy'
+#    id: 'deploy-rest'
+#    waitFor:
+#      - 'test-db'
+#    args: ['run',
+#           '--filename', './k8b/db/',
+#           '--location', 'europe-north1',
+#           '--cluster', 'my-autopilot-cluster' ]
+#
+#  # Wait for rest start
+#  - name: 'gcr.io/cloud-builders/gke-deploy'
+#    id: 'check-start'
+#    waitFor: ['deploy-rest']
+#    entrypoint: 'bash'
+#    args:
+#      - '-c'
+#      - |
+#
+#
+#
+#  # Test REST-API
+#  - name: 'gcr.io/cloud-builders/gke-deploy'
+#    id: 'test-REST-API'
 
 
 
   # Delete Db from cluster
   - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'delete-postgres'
     entrypoint: 'kubectl'
     args: ['delete', '--filename', './k8b/db/']
   # Delete PERSISTENT VOLUME
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    entrypoint: 'kubectl'
-    args: ['delete', 'pvc',
-      '$(kubectl get pvc --selector=$sel --output=jsonpath={.items..metadata.name})']
+    id: 'delete-persistent-volume'
+    waitFor: ['delete-postgres']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+         pvc_name=$(kubectl get pvc --selector=$sel -o jsonpath={.items..metadata.name})
+         kubectl delete pvc $pvc_name
