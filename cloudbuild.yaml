@@ -80,8 +80,17 @@ steps:
     args:
       - '-c'
       - |
-         pg_pod_name=$(kubectl get pod --selector=app=pg -o jsonpath={.items..metadata.name})
-         kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
+          pg_pod_name=$(kubectl get pod --selector=app=pg -o jsonpath={.items..metadata.name})
+          is_pod_started=$(kubectl get pod "$pg_pod_name" -o jsonpath={.status..started})
+          while [ ! "$is_pod_started" ]
+          do
+          echo "$is_pod_started"
+          is_pod_started=$(kubectl get pod "$pg_pod_name" -o jsonpath={.status..started})
+          done
+          echo 'PG IS STARTED!'
+          echo 'sleeping'
+          sleep 5
+          kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
     # TODO fix security!
 
 #  # Run REST-API
@@ -124,5 +133,5 @@ steps:
     args:
       - '-c'
       - |
-         pvc_name=$(kubectl get pvc --selector=$sel -o jsonpath={.items..metadata.name})
-         kubectl delete pvc $pvc_name
+          pvc_name=$(kubectl get pvc --selector=$sel -o jsonpath={.items..metadata.name})
+          kubectl delete pvc $pvc_name
