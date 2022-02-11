@@ -11,56 +11,58 @@ substitutions:
   _ARTIFACT_FOLDER: 'gs://prod-rest_cloudbuild/api-rest'
   # $REPO_NAME means GitHub's repo name. It will be container name
   _IMAGE: '${_REGION}/${PROJECT_ID}/api-rest/${REPO_NAME}'
+  _PG_USER: 'testUSER'
+  _PG_DB: 'testDB'
 
 steps:
 
-
-  # Валидация кода
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-    entrypoint: 'mvn'
-    args: [ 'validate' ]
-    dir: 'api'
-  # Unit тесты
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-    entrypoint: 'mvn'
-    args: [ 'test' ]
-    dir: 'api'
-  # Собираем джарник.
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-    entrypoint: 'mvn'
-    args: ['package', '-Dmaven.test.skip=true']
-    dir: 'api'
-  # Засовываем джарник в хранилище
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-    entrypoint: 'gsutil'
-    args: ['cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar']
-    dir: 'api'
-
-  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-    entrypoint: 'bash'
-    args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
-    dir: 'api'
-  # Пулим старый контейнер, если он есть.
-  - name: 'docker:20.10.12-alpine3.15'
-    entrypoint: 'sh'
-    args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
-    dir: 'api'
-  # Билдим контейнер используя кэш спуленного ранее контейнера,
-  # на основе указанного докерфайла.
-  - name: 'docker:20.10.12-alpine3.15'
-    args: ['build',
-      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
-           '-t', '${_IMAGE}:${SHORT_SHA}',
-           '-t', '${_IMAGE}:latest',
-           '--cache-from', '${_IMAGE}:latest',
-           '-f', 'api.dockerfile',
-           '.']
-    dir: 'api'
-  # Push image to artifact registry
-  - name: 'docker:20.10.12-alpine3.15'
-    args: [ 'push', '--all-tags', '${_IMAGE}']
-    dir: 'api'
+#
+#  # Валидация кода
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'mvn'
+#    args: [ 'validate' ]
+#    dir: 'api'
+#  # Unit тесты
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'mvn'
+#    args: [ 'test' ]
+#    dir: 'api'
+#  # Собираем джарник.
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'mvn'
+#    args: ['package', '-Dmaven.test.skip=true']
+#    dir: 'api'
+#  # Засовываем джарник в хранилище
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+#    entrypoint: 'gsutil'
+#    args: ['cp', 'target/a*.jar', '${_ARTIFACT_FOLDER}/a*.jar']
+#    dir: 'api'
+#
+#  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
+#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+#    entrypoint: 'bash'
+#    args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
+#    dir: 'api'
+#  # Пулим старый контейнер, если он есть.
+#  - name: 'docker:20.10.12-alpine3.15'
+#    entrypoint: 'sh'
+#    args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
+#    dir: 'api'
+#  # Билдим контейнер используя кэш спуленного ранее контейнера,
+#  # на основе указанного докерфайла.
+#  - name: 'docker:20.10.12-alpine3.15'
+#    args: ['build',
+#      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
+#           '-t', '${_IMAGE}:${SHORT_SHA}',
+#           '-t', '${_IMAGE}:latest',
+#           '--cache-from', '${_IMAGE}:latest',
+#           '-f', 'api.dockerfile',
+#           '.']
+#    dir: 'api'
+#  # Push image to artifact registry
+#  - name: 'docker:20.10.12-alpine3.15'
+#    args: [ 'push', '--all-tags', '${_IMAGE}']
+#    dir: 'api'
 
   # Kubernetes RUN DB
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -68,6 +70,10 @@ steps:
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
-#  - name: 'bitnami/kubectl:latest'
-#    entrypoint: 'bash'
-#    args: ['-c',]
+  # Test DB in pod
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    entrypoint: 'kubectl'
+    args: [ 'exec',
+            '-it', 'pg-0',
+            '--', '/bin/sh',
+            '-c', 'pgbench -i -U ${_PG_USER} -d ${_PG_DB}']
