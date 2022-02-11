@@ -6,6 +6,7 @@ metadata:
   labels:
     app: pg
 data:
+  # TODO fix security!
   POSTGRES_DB: testDB
   POSTGRES_USER: testUSER
   POSTGRES_PASSWORD: testPASSWORD

@@ -66,17 +66,12 @@ steps:
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
-#  # Little sleep before start tests
-#  - name: 'gcr.io/cloud-builders/gke-deploy'
-#    id: 'waiting-for-DB'
-#    waitFor: ['deploy-db']
-#    entrypoint: 'kubectl'
-#    args: ['get', 'pod']
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: 'test-db'
     waitFor: ['deploy-db']
     entrypoint: 'bash'
+    # TODO fix security!
     args:
       - '-c'
       - |
@@ -88,10 +83,9 @@ steps:
           is_pod_started=$(kubectl get pod "$pg_pod_name" -o jsonpath={.status..started})
           done
           echo 'PG IS STARTED!'
-          echo 'sleeping'
-          sleep 5
+          echo 'sleeping on 5s' && sleep 5
           kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
-    # TODO fix security!
+    
 
 #  # Run REST-API
 #  - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -102,16 +96,6 @@ steps:
 #           '--filename', './k8b/db/',
 #           '--location', 'europe-north1',
 #           '--cluster', 'my-autopilot-cluster' ]
-#
-#  # Wait for rest start
-#  - name: 'gcr.io/cloud-builders/gke-deploy'
-#    id: 'check-start'
-#    waitFor: ['deploy-rest']
-#    entrypoint: 'bash'
-#    args:
-#      - '-c'
-#      - |
-#
 #
 #
 #  # Test REST-API
