@@ -87,24 +87,38 @@ steps:
           kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
     
 
-#  # Run REST-API
-#  - name: 'gcr.io/cloud-builders/gke-deploy'
-#    id: 'deploy-rest'
-#    waitFor:
-#      - 'test-db'
-#    args: ['run',
-#           '--filename', './k8b/db/',
-#           '--location', 'europe-north1',
-#           '--cluster', 'my-autopilot-cluster' ]
-#
-#
-#  # Test REST-API
-#  - name: 'gcr.io/cloud-builders/gke-deploy'
-#    id: 'test-REST-API'
-
-
-
-  # Delete Db from cluster
+  # Run REST-API
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'deploy-rest'
+    waitFor:
+      - 'test-db'
+    args: ['run',
+           '--filename', './k8b/db/',
+           '--location', 'europe-north1',
+           '--cluster', 'my-autopilot-cluster' ]
+  # Test REST-API
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'test-REST-API'
+    waitFor:
+      - 'deploy-rest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          ip=10.35.17.11
+          while [[ ! "$ip" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
+          do
+          echo $ip
+          ip=$(kubectl get service rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          done
+          echo -n "$ip" > ip.txt
+          
+          cat ip.txt
+          # TODO requests to API
+        
+        
+        
+        # Delete Db from cluster
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: 'delete-postgres'
     entrypoint: 'kubectl'
