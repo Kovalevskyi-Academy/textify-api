@@ -1,0 +1,13 @@
+# Ignored folders
+.idea/
+.git/
+api/target/
+
+# Ignored files
+*.iml
+*.md
+*.mk
+docker-compose.yml
+LICENSE
+.gitignore
+.gcloudignore

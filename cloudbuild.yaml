@@ -7,126 +7,123 @@ options:
 substitutions:
   # $REPO_NAME means GitHub's repo name. It will be container name
   _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
-  _PG_POD_NAME: ''
 
 steps:
 
-#
-#  # Валидация кода
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'mvn'
-#    args: [ 'validate' ]
-#    dir: 'api'
-#  # Unit тесты
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'mvn'
-#    args: [ 'test' ]
-#    dir: 'api'
-#  # Собираем джарник.
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'mvn'
-#    args: ['package', '-Dmaven.test.skip=true']
-#    dir: 'api'
-#  # Засовываем джарник в хранилище
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-#    entrypoint: 'gsutil'
-#    args: ['cp', 'target/a*.jar', 'gs://prod-rest_cloudbuild/api-rest/a*.jar']
-#    dir: 'api'
-#
-#  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
-#  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
-#    entrypoint: 'bash'
-#    args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
-#    dir: 'api'
-#  # Пулим старый контейнер, если он есть.
-#  - name: 'docker:20.10.12-alpine3.15'
-#    entrypoint: 'sh'
-#    args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
-#    dir: 'api'
-#  # Билдим контейнер используя кэш спуленного ранее контейнера,
-#  # на основе указанного докерфайла.
-#  - name: 'docker:20.10.12-alpine3.15'
-#    args: ['build',
-#      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
-#           '-t', '${_IMAGE}:${SHORT_SHA}',
-#           '-t', '${_IMAGE}:latest',
-#           '--cache-from', '${_IMAGE}:latest',
-#           '-f', 'api.dockerfile',
-#           '.']
-#    dir: 'api'
-#  # Push image to artifact registry
-#  - name: 'docker:20.10.12-alpine3.15'
-#    args: [ 'push', '--all-tags', '${_IMAGE}']
-#    dir: 'api'
+
+  # Валидация кода
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    id: validate-code
+    waitFor: ['-']
+    entrypoint: 'mvn'
+    args: [ 'validate' ]
+    dir: 'api'
+  # Unit тесты
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    id: do-unit-tests
+    waitFor: ['-']
+    entrypoint: 'mvn'
+    args: [ 'test' ]
+    dir: 'api'
+  # Собираем джарник.
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    id: build-jar
+    waitFor: ['do-unit-tests']
+    entrypoint: 'mvn'
+    args: ['package', '-Dmaven.test.skip=true']
+    dir: 'api'
+  # Засовываем джарник в хранилище
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    id: save-jar-to-GCS
+    waitFor: ['build-jar']
+    entrypoint: 'gsutil'
+    args: ['cp', 'target/a*.jar', 'gs://prod-rest_cloudbuild/api-rest/a*.jar']
+    dir: 'api'
+
+  # Распаковываем джарник. Это позволит лучше использовать слои контейнера.
+  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+    id: unpack-jar
+    waitFor: ['build-jar']
+    entrypoint: 'bash'
+    args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
+    dir: 'api'
+  # Пулим старый контейнер, если он есть.
+  - name: 'docker:20.10.12-alpine3.15'
+    id: pull-previous-container
+    waitFor: ['build-jar']
+    entrypoint: 'sh'
+    args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
+    dir: 'api'
+  # Билдим контейнер используя кэш спуленного ранее контейнера,
+  # на основе указанного докерфайла.
+  - name: 'docker:20.10.12-alpine3.15'
+    id: build-new-container
+    waitFor: ['unpack-jar', 'pull-previous-container']
+    args: ['build',
+      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
+           '-t', '${_IMAGE}:${SHORT_SHA}',
+           '-t', '${_IMAGE}:latest',
+           '--cache-from', '${_IMAGE}:latest',
+           '-f', 'api.dockerfile',
+           '.']
+    dir: 'api'
+  # Push image to artifact registry
+  - name: 'docker:20.10.12-alpine3.15'
+    id: push-to-GCAR
+    waitFor: ['build-new-container']
+    args: [ 'push', '--all-tags', '${_IMAGE}']
+    dir: 'api'
 
   # Kubernetes RUN DB
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'deploy-db'
-    args: ['run',
+    id: deploy-db
+    waitFor: ['-']
+    args: ['apply',
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'test-db'
+    id: test-db
     waitFor: ['deploy-db']
     entrypoint: 'bash'
     # TODO fix security!
-    args:
-      - '-c'
-      - |
-          pg_pod_name=$(kubectl get pod --selector=app=pg -o jsonpath={.items..metadata.name})
-          is_pod_started=$(kubectl get pod "$pg_pod_name" -o jsonpath={.status..started})
-          while [ ! "$is_pod_started" ]
-          do
-          echo "$is_pod_started"
-          is_pod_started=$(kubectl get pod "$pg_pod_name" -o jsonpath={.status..started})
-          done
-          echo 'PG IS STARTED!'
-          echo 'sleeping on 5s' && sleep 5
-          kubectl exec $pg_pod_name -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
+    args: ['./scripts/test_db.sh']
     
 
   # Run REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'deploy-rest'
+    id: deploy-rest
     waitFor:
-      - 'test-db'
+      - 'push-to-GCAR'
     args: ['run',
-           '--filename', './k8b/db/',
+           '--filename', './k8b/rest/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster' ]
   # Test REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'test-REST-API'
+    id: test-REST-API
     waitFor:
       - 'deploy-rest'
     entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-          ip=10.35.17.11
-          while [[ ! "$ip" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
-          do
-          echo $ip
-          ip=$(kubectl get service rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          done
-          echo -n "$ip" > ip.txt
-          
-          cat ip.txt
-          # TODO requests to API
-        
-        
-        
-        # Delete Db from cluster
+    args: ['./scripts/test_rest_api.sh']
+
+  # Delete REST-API from GKE
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'delete-postgres'
+    id: K8B-delete-REST-API
+    waitFor: [ 'test-REST-API' ]
+    entrypoint: 'kubectl'
+    args: [ 'delete', '--filename', './k8b/rest/' ]
+  # Delete Db from cluster
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: K8B-delete-postgres
+    waitFor: ['test-REST-API']
     entrypoint: 'kubectl'
     args: ['delete', '--filename', './k8b/db/']
   # Delete PERSISTENT VOLUME
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: 'delete-persistent-volume'
-    waitFor: ['delete-postgres']
+    id: K8B-delete-persistent-volume
+    waitFor: ['test-REST-API']
     entrypoint: 'bash'
     args:
       - '-c'
