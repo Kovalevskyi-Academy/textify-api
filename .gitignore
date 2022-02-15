@@ -1,10 +1,8 @@
 # folders
-*/.idea
-*/target
+**/.idea
+**/target
 experiments/
-/api/target/
-/.idea/
-
+output/
 
 # files
 *.iml
