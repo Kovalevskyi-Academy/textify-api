@@ -97,6 +97,7 @@ steps:
     id: test-REST-API
     waitFor:
       - 'deploy-rest'
+      - 'test-db'
     entrypoint: 'bash'
     args: ['./scripts/test_rest_api.sh']
 

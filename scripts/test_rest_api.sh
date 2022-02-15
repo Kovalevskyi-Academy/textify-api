@@ -44,10 +44,10 @@ if curl "http://${ip}:8080/messages" \
          -d "${json}" \
          -H "Content-Type: application/json"
 then
+  echo 'POST request success'
+else
   echo 'FAIL POST REQUEST!'
   exit 1
-else
-  echo 'POST request success'
 fi
 
 # Check POSTed object
