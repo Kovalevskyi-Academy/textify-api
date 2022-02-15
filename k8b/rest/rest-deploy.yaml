@@ -6,7 +6,7 @@ metadata:
     app: rest-api
 spec:
   revisionHistoryLimit: 3
-  minReadySeconds: 30
+  minReadySeconds: 10
   replicas: 2
   selector:
     matchLabels:

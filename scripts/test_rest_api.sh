@@ -3,32 +3,32 @@
 ip=0
 secondsPassed=1
 failTime=20
-while [[ ! "$ip" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
+while [[ ! "${ip}" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
 do
-  if [ $secondsPassed -ge $failTime ]
+  if [ "${secondsPassed}" -ge "${failTime}" ]
     then
-    echo "After $failTime seconds I fill fail connection with service!"
+    echo "After ${failTime} seconds I fill fail connection with service!"
     exit 1
   fi
-  sleep "$secondsPassed"s
+  sleep "${secondsPassed}"s
   ip=$(kubectl get service rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  secondsPassed=$(( "$secondsPassed" + "$secondsPassed" ))
+  secondsPassed=$(( "${secondsPassed}" + "${secondsPassed}" ))
 done
 
 # Do GET request
 printf "\n#Do GET request all objects#\n"
 exitCode=1
 failAttempt=0
-waiteTime=6
-while [ "$exitCode" -ne 0 ]
+waitTime=6
+while [ "${exitCode}" -ne 0 ]
 do
-  sleep "$waiteTime"s
-  curl "http://$ip:8080/messages" -m "$waiteTime" --silent
+  sleep "${waitTime}"s
+  curl "http://${ip}:8080/messages" -m "${waitTime}" --silent
   exitCode=$?
-  failAttempt=$(( "$failAttempt" + 1))
-  if [ "$failAttempt" -gt 15 ]
+  failAttempt=$(( "${failAttempt}" + 1))
+  if [ "${failAttempt}" -gt 15 ]
   then
-    echo "GET request FAIL after $failAttempt !"
+    echo "GET request FAIL after ${failAttempt} !"
     exit 1
   fi
 done
@@ -37,12 +37,13 @@ printf "\n#GET request success!#\n"
 # Do POST to REST-API
 printf "\n#Do POST#\n"
 testObject="POST from Google Cloud Build Script!"
-json=$(printf "{\"id\": -1, \"message\": \"%s\"}" "$testObject")
-curl "http://$ip:8080/messages" \
-      -X POST \
-      -d "$json" \
-      -H "Content-Type: application/json"
-if [ "$?" -ne 0 ]; then
+json=$(printf "{\"id\": -1, \"message\": \"%s\"}" "${testObject}")
+
+if curl "http://${ip}:8080/messages" \
+         -X POST \
+         -d "${json}" \
+         -H "Content-Type: application/json"
+then
   echo 'FAIL POST REQUEST!'
   exit 1
 else
@@ -53,8 +54,8 @@ fi
 printf "\n#Do GET request agan!#\n"
 # required dependency install
 apk add --no-cache jq -q
-actualResponse=$(curl "http://$ip:8080/messages/5" -s 2>/dev/null | jq -r '.message')
-if [ "$testObject" = "$actualResponse" ]; then
+actualResponse=$(curl "http://${ip}:8080/messages/5" -s 2>/dev/null | jq -r '.message')
+if [ "${testObject}" = "${actualResponse}" ]; then
   echo 'TEST REST-API SUCCESS'
   exit 0
 else
