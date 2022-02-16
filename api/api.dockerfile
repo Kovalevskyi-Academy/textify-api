@@ -18,7 +18,7 @@ USER api:textify
 ARG DEPENDENCY=target/dependency
 COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/module-info.class /app
+#COPY ${DEPENDENCY}/module-info.class /app
 COPY ${DEPENDENCY}/BOOT-INF/classes /app
 
 # 2. Тут мы копируем слои докера, в которые было превращено приложение самой джавой!
