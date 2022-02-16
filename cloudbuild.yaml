@@ -88,6 +88,7 @@ steps:
     id: deploy-rest
     waitFor:
       - 'push-to-GCAR'
+      - 'test-db'
     args: ['run',
            '--filename', './k8b/rest/',
            '--location', 'europe-north1',
@@ -97,7 +98,6 @@ steps:
     id: test-REST-API
     waitFor:
       - 'deploy-rest'
-      - 'test-db'
     entrypoint: 'bash'
     args: ['./scripts/test_rest_api.sh']
 
@@ -122,4 +122,4 @@ steps:
       - '-c'
       - |
           pvc_name=$(kubectl get pvc --selector=$sel -o jsonpath={.items..metadata.name})
-          kubectl delete pvc $pvc_name
+          kubectl delete pvc ${pvc_name}
