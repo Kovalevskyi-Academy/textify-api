@@ -7,6 +7,6 @@ What is an OpenAPI
 
 
 
-The project's API scheme [here](./openapi.yaml).
+The project's API scheme [here](openapi.yaml).
 
 Use a [Swagger plugin](https://plugins.jetbrains.com/plugin/8347-swagger).

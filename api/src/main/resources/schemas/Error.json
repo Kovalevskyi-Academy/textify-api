@@ -8,6 +8,7 @@
       "description": "This message tells you exactly what went wrong.",
       "type": "string",
       "minLength": 9,
+      "pattern": "^(.*)$",
       "example": "What you are looking for is not here!"
     }
   },

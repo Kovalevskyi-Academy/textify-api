@@ -25,29 +25,25 @@ paths:
                 type: array
                 items:
                   properties:
-                    storyId:
-                      type: string
-                      example: "story00"
+                    storyUuid:
+                      $ref: "../schemas/story.json#/properties/storyUuid"
                     storyTitle:
-                      type: string
-                      example: "It is a long test story"
+                      $ref: "../schemas/story.json#/properties/storyTitle"
                     storyDescription:
-                      description: Description of each story.
-                      type: string
-                      example: "This is an action-packed story about the journey of an elephant in the ass of a cockroach!"
-  /stories/{storyId}:
+                      $ref: "../schemas/story.json#/properties/storyDescription"
+                    storyAuthor:
+                      $ref: "../schemas/story.json#/$defs/metadata/properties/storyAuthor"
+  /stories/{storyUuid}:
     get:
       summary: "Get a only one full story object."
       description: "..."
       parameters:
-        - name: storyId
+        - name: storyUuid
           in: path
           required: true
           description: "Unique identifier of some story."
           schema:
-            type: string
-            minLength: 1
-            example: "story00"
+            $ref: "../schemas/uuid.json"
 
       responses:
         200:
@@ -55,7 +51,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/story.json'
+                $ref: "../schemas/story.json"
         404:
           description: "There is no story with the specified ID."
           content:
@@ -63,27 +59,23 @@ paths:
               schema:
                 $ref: '../schemas/Error.json'
 
-  /stories/{storyId}/nodes/{nodeId}:
+  /stories/{storyUuid}/nodes/{nodeUuid}:
     get:
       summary: "Get one specified node from the specified story."
       description: "..."
       parameters:
-        - name: storyId
+        - name: storyUuid
           in: path
           required: true
           description: "Unique identifier of some story."
           schema:
-            type: string
-            minLength: 1
-            example: "story00"
-        - name: nodeId
+            $ref: "../schemas/uuid.json"
+        - name: nodeUuid
           in: path
           required: true
           description: "Unique identifier of specified node from the specified story."
           schema:
-            type: string
-            minLength: 1
-            example: "node00"
+            $ref: "../schemas/uuid.json"
       responses:
         200:
           description: "Only if this specified node is present in specified story."

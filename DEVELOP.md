@@ -1,12 +1,15 @@
 # Introduction to the dev
-This project based on OpenAPI.
-More details [here](./api/Open_API/openapi.yaml).
+
+Models in this project based on JSON schemas. [Details here](./api/src/main/resources/schemas/MODEL_SCHEMAS.md).
+
+API of this project based on OpenAPI.
+More details [here](./api/src/main/resources/Open_API/OpenAPI.md).
 
 [Notes about Spring REST-API here.](./api/API.md)
 
 In Database role is PostgreSQL → [details here](./DataB/DB_DESCRIPTION.md).
 
-And all this takes off on Google services:
+And all of that takes off on Google services:
     - Cloud Build
     - Cloud Storage
     - Artifact Registry
@@ -36,7 +39,7 @@ Also, this project can be started on local machine for little experiments. Detai
 ### Check work
 - Or do request from ARC to localhost:8080
 - Or use CURL to localhost:8080
-### Connect to the working containers & watch them
+### Connect to these working containers & watch them
 1. You can connect inside running container:
    - `docker ps`
    - `docker exec -it CONTAINER_NAME or ID`
@@ -48,14 +51,3 @@ Also, this project can be started on local machine for little experiments. Detai
    - `docker ps`
    - `docker container logs CONTAINER_ID OR NAME`
       See more options [here](https://docs.docker.com/engine/reference/commandline/logs/).
-
-
-## GOOGLE CLOUD SERVICES
-1. Ever commit in main branch or ever Pull Request — Google Cloud Build do:
-    - validate, compile, test & package java code
-    - save jar artifact to GCS
-    - build docker container with the jar file & save it to artifact registry
-    - deploys the entire project on a Kubernetes cluster & do tests
-    - delete the project from Kubernetes cluster (**WARNING** if any cloudbuild step fails, then **you must** manually remove all parts of this project from the Kubernetes cluster!)
-
-2. Google Kubernetes Engine [look here](./k8b/K8b.md).
