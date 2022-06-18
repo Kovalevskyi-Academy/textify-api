@@ -9,4 +9,12 @@ What is an OpenAPI
 
 The project's API scheme [here](openapi.yaml).
 
-Use a [Swagger plugin](https://plugins.jetbrains.com/plugin/8347-swagger).
+Use one of plugins (choose the freshest):
+- [Swagger plugin](https://plugins.jetbrains.com/plugin/8347-swagger).
+- [OpenAPI (Swagger) editor](https://plugins.jetbrains.com/plugin/14837-openapi-swagger-editor)
+
+[Примеры POST-запроса.](https://swagger.io/docs/specification/describing-request-body/)
+
+[HTTP Status Codes](https://www.restapitutorial.com/httpstatuscodes.html)
+
+Объединяем OpenIPI & Spring: https://springdoc.org/
