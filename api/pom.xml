@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.6.1</version>
+    <version>2.7.0</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>api</artifactId>
   <version>1-SNAPSHOT</version>
   <name>REST-api</name>
-  <description>Interactive text game's API.</description>
+  <description>Interactive text games API.</description>
 
   <properties>
     <java.version>17</java.version>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.3.2</version>
+      <version>42.3.6</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -57,8 +57,12 @@
   </dependencies>
 
   <build>
+    <finalName>app</finalName>
     <plugins>
-
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 

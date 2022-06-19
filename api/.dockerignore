@@ -9,9 +9,8 @@ Dockerfile
 # Ignore folders
 .git/
 .idea/
-tmp*
 src/
 target/
 
 # Folders not ignored
-! target/dependency/
+!target/dependency/
