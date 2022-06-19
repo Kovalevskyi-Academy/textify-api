@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "http://example.com/node.json#",
   "title": "NODE",
   "description": "This is the smallest unit of the whole history.",
   "type": "object",
@@ -12,8 +11,7 @@
   "properties": {
     "nodeUuid": {
       "description": "Unique identifier of each node.",
-      "$ref": "uuid.json",
-      "example": "7131532b-6053-4380-bc7d-179ee146aabg"
+      "$ref": "uuid.json"
     },
     "storyUuid": {
       "description": "Link to the story to which the current node belongs.",

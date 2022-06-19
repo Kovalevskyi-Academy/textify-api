@@ -7,7 +7,7 @@
       "description": "Description of the essence of the choice.",
       "type": "string",
       "minLength": 1,
-      "example": "Current Pick: Take a Cockroach Assfucking Journey!"
+      "example": "Current choice: go on a great journey in the ass to a cockroach!"
     },
     "nextNodeUuid": {
       "description": "Unique identifier of next Node.",

@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "http://example.com/date-time.json#",
   "title": "JSON schema for date with time",
   "type": "string",
   "format": "date-time",
