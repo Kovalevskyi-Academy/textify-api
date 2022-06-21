@@ -1,14 +1,10 @@
 # Ignore files
 *.md
 *.iml
-.gitignore
 *.mk
 *.dockerfile
-Dockerfile
 
 # Ignore folders
-.git/
-.idea/
 src/
 target/
 

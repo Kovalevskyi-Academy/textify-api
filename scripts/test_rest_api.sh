@@ -19,14 +19,15 @@ done
 printf "\n#Do GET request all objects#\n"
 exitCode=1
 failAttempt=0
-waitTime=6
+waitTime=20
 while [ "${exitCode}" -ne 0 ]
 do
   sleep "${waitTime}"s
-  curl "http://${ip}:8080/messages" -m "${waitTime}" --silent
+  echo "-> attempt # ${failAttempt}"
+  curl "http://${ip}:8080/messages" -m "${waitTime}"
   exitCode=$?
   failAttempt=$(( "${failAttempt}" + 1))
-  if [ "${failAttempt}" -gt 15 ]
+  if [ "${failAttempt}" -gt 20 ]
   then
     echo "GET request FAIL after ${failAttempt} !"
     exit 1
@@ -55,6 +56,7 @@ printf "\n#Do GET request agan!#\n"
 # required dependency install
 apk add --no-cache jq -q
 actualResponse=$(curl "http://${ip}:8080/messages/5" -s 2>/dev/null | jq -r '.message')
+printf "\n%s\n" "${actualResponse}"
 if [ "${testObject}" = "${actualResponse}" ]; then
   echo 'TEST REST-API SUCCESS'
   exit 0
