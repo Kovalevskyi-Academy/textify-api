@@ -1,28 +1,31 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "NODE",
-  "description": "This is the smallest unit of the whole history. It contains content: text.",
+  "description": "This is the smallest unit of the whole history.",
   "type": "object",
+  "required": [
+    "nodeUuid",
+    "nodeTitle",
+    "content"
+  ],
   "properties": {
-    "nodeId": {
-      "description": "Unique identifier.",
-      "type": "string",
-      "minLength": 1,
-      "example": "node00"
+    "nodeUuid": {
+      "description": "Unique identifier of each node.",
+      "$ref": "uuid.json"
     },
-    "storyId": {
-      "description":"Link to the story to which the current node belongs.",
-      "type": "string",
-      "minLength": 1,
-      "example": "story00"
+    "storyUuid": {
+      "description": "Link to the story to which the current node belongs.",
+      "$ref": "uuid.json",
+      "example": "065d9e05-d5a9-4173-9161-60009607e2c1"
     },
     "nodeTitle": {
       "description": "The name the author gave to the node.",
       "type": "string",
+      "pattern": "^(.*)$",
       "example": "Dao begins with the first step."
     },
     "content": {
-      "description": "For now, only text. Is it formatted text?",
+      "description": "For now, only not formatted text.",
       "type": "string",
       "example": "In the beginning there was light.\nThe baby elephant woke up from a bright light in his eyes. The midday sun was already high above the horizon. Not understanding what was happening, he somehow got to his feet and looked around: there was a hemp field all around."
     },
@@ -35,6 +38,5 @@
       "minItems": 0,
       "uniqueItems": true
     }
-  },
-  "required": ["nodeId", "nodeTitle", "content"]
+  }
 }

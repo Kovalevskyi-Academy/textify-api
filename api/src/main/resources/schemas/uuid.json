@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON schema for uuid",
+  "description": "Unique identifier.",
+  "type": "string",
+  "format": "uuid",
+  "minLength": 36,
+  "maxLength": 36,
+  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+  "example": "7131532b-6053-4380-bc7d-179ee146aa6c"
+}

@@ -8,6 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Trololo.
+ */
 @Entity
 @Table(name = "messages")
 public final class Message {
@@ -48,8 +51,7 @@ public final class Message {
       return false;
     }
     var that = (Message) obj;
-    return this.id == that.id &&
-        Objects.equals(this.message, that.message);
+    return (Objects.equals(this.message, that.message));
   }
 
   @Override
