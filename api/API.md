@@ -1,7 +1,7 @@
 # Spring REST API
 
-This REST-API must conform to the [OpenAPI schema](src/main/resources/Open_API/openapi.yaml)!
-[More info here.](src/main/resources/Open_API/OpenAPI.md)
+This REST-API must conform to the [OpenAPI schema](../Open_API/openapi.yaml)!
+[More info here.](../Open_API/OpenAPI.md)
 
 
 

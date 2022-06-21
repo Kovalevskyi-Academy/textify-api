@@ -29,20 +29,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/story.json'
+              $ref: './schemas/story.json'
       responses:
         '201':
           description: Story created. **Returning** UUID.
           content:
             application/json:
               schema:
-                $ref: '../schemas/story.json#/properties/storyUuid'
+                $ref: './schemas/story.json#/properties/storyUuid'
         '4XX':
           description: Any problems with creating record in DB.
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               example:
                 message: Yur story-object is broken!
         '5XX':
@@ -50,7 +50,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -70,13 +70,13 @@ paths:
                   type: object
                   properties:
                     storyUuid:
-                      $ref: '../schemas/story.json#/properties/storyUuid'
+                      $ref: './schemas/story.json#/properties/storyUuid'
                     storyTitle:
-                      $ref: '../schemas/story.json#/properties/storyTitle'
+                      $ref: './schemas/story.json#/properties/storyTitle'
                     storyDescription:
-                      $ref: '../schemas/story.json#/properties/storyDescription'
+                      $ref: './schemas/story.json#/properties/storyDescription'
                     storyAuthor:
-                      $ref: '../schemas/story.json#/$defs/metadata/properties/storyAuthor'
+                      $ref: './schemas/story.json#/$defs/metadata/properties/storyAuthor'
 
   # Вопрос: а что если отказаться от параметров в пути и получать их из Header Parameters?
   # Это очень актуально будет в работе с нодами, которые сильно зависят от story.
@@ -88,7 +88,7 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: '../schemas/story.json#/properties/storyUuid'
+          $ref: './schemas/story.json#/properties/storyUuid'
     get:
       tags:
         - story
@@ -99,13 +99,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/story.json'
+                $ref: './schemas/story.json'
         '404':
           description: There is no story with the specified UUID.
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
     patch:
       tags:
         - story
@@ -118,8 +118,8 @@ paths:
           application/json:
             schema:
               anyOf:
-                - $ref: '../schemas/story.json'
-                - $ref: '../schemas/story.json#/$defs/metadata/properties/storyAuthor'
+                - $ref: './schemas/story.json'
+                - $ref: './schemas/story.json#/$defs/metadata/properties/storyAuthor'
       responses:
         '501':
           description: Not supported yet.
@@ -141,7 +141,7 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: '../schemas/story.json#/properties/storyUuid'
+          $ref: './schemas/story.json#/properties/storyUuid'
     post:
       tags:
         - node
@@ -152,20 +152,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/node.json'
+              $ref: './schemas/node.json'
       responses:
         '201':
           description: Node created. **Returning** UUID.
           content:
             application/json:
               schema:
-                $ref: '../schemas/node.json#/properties/nodeUuid'
+                $ref: './schemas/node.json#/properties/nodeUuid'
         '4XX':
           description: Any problems with creating record in DB.
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               example:
                 message: Yur node-object is broken!
         '5XX':
@@ -173,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -188,13 +188,13 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: '../schemas/story.json#/properties/storyUuid'
+          $ref: './schemas/story.json#/properties/storyUuid'
       - name: nodeUuid
         in: path
         required: true
         description: Unique identifier of some node.
         schema:
-          $ref: '../schemas/node.json#/properties/nodeUuid'
+          $ref: './schemas/node.json#/properties/nodeUuid'
     get:
       tags:
         - node
@@ -205,13 +205,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/node.json'
+                $ref: './schemas/node.json'
         '404':
           description: There is no node with the specified UUID.
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               example:
                 message: Yur node-object not found!
     delete:
@@ -226,7 +226,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/Error.json'
+                $ref: './schemas/Error.json'
               examples:
                 storyNotFound:
                   value:

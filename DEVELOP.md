@@ -1,9 +1,9 @@
 # Introduction to the dev
 
-Models in this project based on JSON schemas. [Details here](./api/src/main/resources/schemas/MODEL_SCHEMAS.md).
+Models in this project based on JSON schemas. [Details here](./Open_API/schemas/MODEL_SCHEMAS.md).
 
 API of this project based on OpenAPI.
-More details [here](./api/src/main/resources/Open_API/OpenAPI.md).
+More details [here](./Open_API/OpenAPI.md).
 
 [Notes about Spring REST-API here.](./api/API.md)
 
@@ -15,7 +15,7 @@ And all of that takes off on Google services:
     - Artifact Registry
     - Kubernetes Engine
 
-Also, this project can be started on local machine for little experiments. Details is below.
+**Also, this project can be started on local machine for little experiments. Details is below.**
 
 ## GOOGLE CLOUD SERVICES
 1. Details about Google Cloud Build [look here](./CLOUDBUILD.md).
@@ -23,10 +23,10 @@ Also, this project can be started on local machine for little experiments. Detai
 
 ## UP and DOWN the project LOCALLY fo tests.
 ### requirements local
-- docker & docker-compose
+- Docker Engine with Docker Compose Plugin (or Docker Desktop)
 - Java 17
-- MAVEN 3.8.3++
-- GNU Make 4.2.1++
+- MAVEN 3.x.x
+- GNU Make 4.x.x
 - Something like **Advanced Rest Client (ARC)**. [install link](https://install.advancedrestclient.com/install)
 
 ### Do up & do  down

@@ -9,7 +9,7 @@ What is an OpenAPI
 
 The project's API scheme [here](openapi.yaml).
 
-Use one of plugins (choose the freshest):
+For DEVELOPMENT use one of plugins (choose the freshest):
 - [Swagger plugin](https://plugins.jetbrains.com/plugin/8347-swagger).
 - [OpenAPI (Swagger) editor](https://plugins.jetbrains.com/plugin/14837-openapi-swagger-editor)
 
@@ -18,3 +18,5 @@ Use one of plugins (choose the freshest):
 [HTTP Status Codes](https://www.restapitutorial.com/httpstatuscodes.html)
 
 Объединяем OpenIPI & Spring: https://springdoc.org/
+
+[ХАБР](https://habr.com/ru/post/541592/) - генерация кода из документации и генерация документации из кода.
