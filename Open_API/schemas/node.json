@@ -13,11 +13,6 @@
       "description": "Unique identifier of each node.",
       "$ref": "uuid.json"
     },
-    "storyUuid": {
-      "description": "Link to the story to which the current node belongs.",
-      "$ref": "uuid.json",
-      "example": "065d9e05-d5a9-4173-9161-60009607e2c1"
-    },
     "nodeTitle": {
       "description": "The name the author gave to the node.",
       "type": "string",
