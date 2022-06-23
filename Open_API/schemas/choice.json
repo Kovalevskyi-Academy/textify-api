@@ -11,8 +11,7 @@
     },
     "nextNodeUuid": {
       "description": "Unique identifier of next Node.",
-      "$ref": "uuid.json",
-      "example": "7131532b-6053-4380-bc7d-179ee146aabp"
+      "$ref": "uuid.json"
     }
   },
   "required": ["nextNodeId", "choiceText"]

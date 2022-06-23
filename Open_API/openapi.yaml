@@ -42,7 +42,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               example:
                 message: Yur story-object is broken!
         '5XX':
@@ -50,7 +50,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -76,7 +76,7 @@ paths:
                     storyDescription:
                       $ref: './schemas/story.json#/properties/storyDescription'
                     storyAuthor:
-                      $ref: './schemas/story.json#/$defs/metadata/properties/storyAuthor'
+                      $ref: './schemas/story.json#/properties/authors'
 
   # Вопрос: а что если отказаться от параметров в пути и получать их из Header Parameters?
   # Это очень актуально будет в работе с нодами, которые сильно зависят от story.
@@ -105,7 +105,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
     patch:
       tags:
         - story
@@ -119,7 +119,7 @@ paths:
             schema:
               anyOf:
                 - $ref: './schemas/story.json'
-                - $ref: './schemas/story.json#/$defs/metadata/properties/storyAuthor'
+                - $ref: './schemas/story.json#/properties/authors'
       responses:
         '501':
           description: Not supported yet.
@@ -165,7 +165,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               example:
                 message: Yur node-object is broken!
         '5XX':
@@ -173,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -211,7 +211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               example:
                 message: Yur node-object not found!
     delete:
@@ -226,7 +226,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/Error.json'
+                $ref: './schemas/requestError.json'
               examples:
                 storyNotFound:
                   value:
