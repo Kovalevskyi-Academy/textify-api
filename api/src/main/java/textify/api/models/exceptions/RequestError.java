@@ -1,4 +1,4 @@
-package textify.api.models;
+package textify.api.models.exceptions;
 
 import org.springframework.data.rest.core.event.ExceptionEvent;
 
