@@ -78,8 +78,7 @@ paths:
                     storyAuthor:
                       $ref: './schemas/story.json#/properties/authors'
 
-  # Вопрос: а что если отказаться от параметров в пути и получать их из Header Parameters?
-  # Это очень актуально будет в работе с нодами, которые сильно зависят от story.
+  # Мы будем использовать и Path Parameters и Query Parameters
   # читаем тут: https://swagger.io/docs/specification/describing-parameters/
   /stories/{storyUuid}:
     parameters:
@@ -132,8 +131,6 @@ paths:
         '200':
           description: Story removed!
 
-  # Для того чтобы запостить ноду приходиться выписывать отдельный путь...
-  # Считаю что передача параметров в хедерах сократит количество и длину путей.
   /stories/{storyUuid}/nodes/:
     parameters:
       - name: storyUuid
