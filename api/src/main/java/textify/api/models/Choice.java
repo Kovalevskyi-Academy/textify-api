@@ -1,11 +1,15 @@
 package textify.api.models;
 
-import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Choice {
 
+  @Column(name = "choice_text", updatable = true, nullable = false, unique = true, length = 500)
   private String choiceText;
+  @Column(name = "next_node_uuid", updatable = true, unique = false, length = 36)
   private UUID nextNodeUuid;
 
   public Choice() {}
@@ -19,8 +23,16 @@ public class Choice {
     return choiceText;
   }
 
+  public void setChoiceText(String choiceText) {
+    this.choiceText = choiceText;
+  }
+
   public UUID getNextNodeUuid() {
     return nextNodeUuid;
+  }
+
+  public void setNextNodeUuid(UUID nextNodeUuid) {
+    this.nextNodeUuid = nextNodeUuid;
   }
 
   @Override

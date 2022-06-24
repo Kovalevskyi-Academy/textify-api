@@ -2,30 +2,60 @@ package textify.api.models;
 
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * Must strictly comply with the story.json scheme.
  */
+@Entity
+@Table(name = "stories")
 public class Story {
 
+  @Column(name = "story_series_uuid", updatable = true, nullable = true, unique = true, length = 36)
   private UUID storySeriesUuid;
+  @Id
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @Column(name = "story_uuid", updatable = false, nullable = false, unique = true, length = 36)
   private UUID storyUuid;
+  @Column(name = "starting_node_uuid", updatable = true, nullable = true,
+      unique = true, length = 36)
   private UUID startingNodeUuid;
+  @Column(name = "story_title", updatable = true, nullable = false, unique = false, length = 150)
   private String storyTitle;
+  @Column(name = "story_description", updatable = true, nullable = false,
+      unique = false, length = 1500)
   private String storyDescription;
-  private Set<String> authors;
-  private Set<String> genres;
-  private Set<String> tags;
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "authors")
+  private Set<String> authors = new HashSet<>(2);
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "genres")
+  private Set<String> genres = new HashSet<>(3);
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "tags")
+  private Set<String> tags = new HashSet<>(3);
+
+  @Column(name = "prod_time", updatable = false, nullable = false, length = 24)
   private Date productionDateTime;
+  @Column(name = "upd_time", updatable = true, nullable = false, length = 24)
   private Date updatingDateTime;
 
   public Story() {}
 
   private Story(Builder builder) {
     storySeriesUuid = builder.storySeriesUuid;
-    storyUuid = builder.storyUuid;
     startingNodeUuid = builder.startingNodeUuid;
     storyTitle = builder.storyTitle;
     storyDescription = builder.storyDescription;
@@ -137,26 +167,38 @@ public class Story {
   public static final class Builder {
 
     private UUID storySeriesUuid;
-    private UUID storyUuid;
     private UUID startingNodeUuid;
     private String storyTitle;
     private String storyDescription;
     private Set<String> authors;
     private Set<String> genres;
     private Set<String> tags;
-    private Date productionDateTime;
-    private Date updatingDateTime;
+    private final Date productionDateTime;
+    private final Date updatingDateTime = new Date();
 
+    /** For creating absolute clean story.
+     */
     public Builder() {
+      this.productionDateTime = new Date();
+    }
+
+    /** For modification existing story.
+     *
+     * @param existing story
+     */
+    public Builder(Story existing) {
+      this.storySeriesUuid = existing.getStorySeriesUuid();
+      this.startingNodeUuid = existing.getStartingNodeUuid();
+      this.storyTitle = existing.getStoryTitle();
+      this.storyDescription = existing.getStoryDescription();
+      this.authors = existing.getAuthors();
+      this.genres = existing.getGenres();
+      this.tags = existing.getTags();
+      this.productionDateTime = existing.getProductionDateTime();
     }
 
     public Builder storySeriesUuid(UUID val) {
       storySeriesUuid = val;
-      return this;
-    }
-
-    public Builder storyUuid(UUID val) {
-      storyUuid = val;
       return this;
     }
 
@@ -176,27 +218,29 @@ public class Story {
     }
 
     public Builder authors(Set<String> val) {
-      authors = val;
+      if (authors == null) {
+        authors = val;
+      } else {
+        authors.addAll(val);
+      }
       return this;
     }
 
     public Builder genres(Set<String> val) {
-      genres = val;
+      if (genres == null) {
+        genres = val;
+      } else {
+        genres.addAll(val);
+      }
       return this;
     }
 
     public Builder tags(Set<String> val) {
-      tags = val;
-      return this;
-    }
-
-    public Builder productionDateTime(Date val) {
-      productionDateTime = val;
-      return this;
-    }
-
-    public Builder updatingDateTime(Date val) {
-      updatingDateTime = val;
+      if (tags == null) {
+        tags = val;
+      } else {
+        tags.addAll(val);
+      }
       return this;
     }
 
