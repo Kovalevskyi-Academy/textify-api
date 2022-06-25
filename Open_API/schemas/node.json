@@ -17,11 +17,15 @@
       "description": "The name the author gave to the node.",
       "type": "string",
       "pattern": "^(.*)$",
+      "minLength": 1,
+      "maxLength": 150,
       "example": "Dao begins with the first step."
     },
     "content": {
       "description": "For now, only not formatted text.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 1500,
       "example": "In the beginning there was light.\nThe baby elephant woke up from a bright light in his eyes. The midday sun was already high above the horizon. Not understanding what was happening, he somehow got to his feet and looked around: there was a hemp field all around."
     },
     "choices": {

@@ -30,7 +30,7 @@
       "description": "The name of the story given by the author.",
       "type": "string",
       "minLength": 1,
-      "maxLength": 500,
+      "maxLength": 150,
       "pattern": "^(.*)$",
       "example": "The journey of an elephant to the ass of a cockroach."
     },
@@ -38,7 +38,7 @@
       "description": "Description of the essence of the story.",
       "type": "string",
       "minLength": 20,
-      "maxLength": 3000,
+      "maxLength": 150,
       "pattern": "^(.*)$",
       "example": "Life pushes the baby elephant to incredible deeds that will lead him to an incredible goal through fantastic transformations."
     },
