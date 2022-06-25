@@ -48,7 +48,6 @@ public class Story {
   private Set<String> tags = new HashSet<>(3);
 
   // TODO Set<Node>
-
   @Column(name = "prod_time", updatable = false, nullable = false, length = 24)
   private Date productionDateTime;
   @Column(name = "upd_time", updatable = true, nullable = false, length = 24)

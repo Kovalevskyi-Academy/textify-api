@@ -30,6 +30,7 @@ public class Node {
   /* embedded collection example:
   https://javabydeveloper.com/mapping-collection-of-embeddablecomposite-types-jpa-with-hibernate/
    */
+
   // TODO maybe use Map<String, UUID>
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "choices")
@@ -95,10 +96,10 @@ public class Node {
     return result;
   }
 
+
   public Builder builder() {
     return new Builder(this);
   }
-
 
   public static final class Builder {
 
