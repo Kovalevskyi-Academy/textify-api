@@ -1,17 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "node.json",
   "title": "NODE",
   "description": "This is the smallest unit of the whole history.",
   "type": "object",
   "required": [
-    "nodeUuid",
+    "storyUuid",
     "nodeTitle",
     "content"
   ],
   "properties": {
     "nodeUuid": {
       "description": "Unique identifier of each node.",
-      "$ref": "uuid.json"
+      "existingJavaType": "java.util.UUID",
+      "readOnly": true,
+      "updatable": false,
+      "example": "7131532b-6053-4380-bc7d-179ee146a111"
+    },
+    "storyUuid": {
+      "description": "The unique ID of the story to which the node belongs.",
+      "existingJavaType": "java.util.UUID",
+      "readOnly": true,
+      "updatable": false,
+      "example": "7131532b-6053-4380-bc7d-179ee146aa6c"
     },
     "nodeTitle": {
       "description": "The name the author gave to the node.",
@@ -29,13 +40,20 @@
       "example": "In the beginning there was light.\nThe baby elephant woke up from a bright light in his eyes. The midday sun was already high above the horizon. Not understanding what was happening, he somehow got to his feet and looked around: there was a hemp field all around."
     },
     "choices": {
-      "description": "The set of possible choices for that particular node. From zero or more.",
-      "type": "array",
-      "items": {
-        "$ref": "choice.json"
-      },
+      "description": "The Map of possible choices for that particular node. From zero or more.",
+      "existingJavaType": "java.util.Map<java.lang.String, java.util.UUID>",
       "minItems": 0,
-      "uniqueItems": true
+      "uniqueItems": true,
+      "example": [
+        {
+          "essenceOfChoice": "Indulge in hemp oblivion.",
+          "nextNodeUuid": "7131532b-6053-4380-bc7d-179ee146a222"
+        },
+        {
+          "essenceOfChoice": "It's time to get out of this hemp hell!",
+          "nextNodeUuid": "7131532b-6053-4380-bc7d-179ee146a333"
+        }
+      ]
     }
   }
 }

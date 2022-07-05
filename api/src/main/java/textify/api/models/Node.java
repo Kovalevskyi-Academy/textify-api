@@ -1,8 +1,11 @@
 package textify.api.models;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import javax.naming.OperationNotSupportedException;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -14,39 +17,54 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table (name = "nodes")
+@Table(name = "nodes")
 public class Node {
+
+  private static final int TITLE_LEN = 150;
+  private static final int CONTENT_LEN = 1500;
 
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   @Column(name = "node_uuid", updatable = false, nullable = false, unique = true, length = 36)
   private UUID nodeUuid;
-  @Column(name = "node_title", updatable = true, nullable = false, unique = false, length = 150)
+  @Column(name = "story_uuid", updatable = false, nullable = false, unique = false, length = 36)
+  private UUID storyUuid;
+  @Column(name = "node_title", updatable = true, nullable = false, unique = false,
+      length = TITLE_LEN)
   private String nodeTitle;
-  @Column(name = "content", updatable = true, nullable = false, unique = false, length = 1500)
+  @Column(name = "content", updatable = true, nullable = false, unique = false,
+      length = CONTENT_LEN)
   private String content;
 
   /* embedded collection example:
   https://javabydeveloper.com/mapping-collection-of-embeddablecomposite-types-jpa-with-hibernate/
    */
 
-  // TODO maybe use Map<String, UUID>
+  // TODO maybe use @MapKeyJoinColumn(name = "current_node_id")
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "choices")
-  private Set<Choice> choices = new HashSet<>(2);
+  private Map<String, UUID> choices;
 
-  public Node() {}
+
+  public Node() {
+  }
 
   private Node(Builder builder) {
     nodeUuid = builder.nodeUuid;
+    storyUuid = builder.storyUuid;
     nodeTitle = builder.nodeTitle;
     content = builder.content;
-    setChoices(builder.choices);
+    this.choices = builder.choices;
   }
+
 
   public UUID getNodeUuid() {
     return nodeUuid;
+  }
+
+  public UUID getStoryUuid() {
+    return storyUuid;
   }
 
   public String getNodeTitle() {
@@ -57,16 +75,16 @@ public class Node {
     return content;
   }
 
-  public Set<Choice> getChoices() {
+  public Map<String, UUID> getChoices() {
     return choices;
   }
 
-  public void setChoices(Set<Choice> choices) {
-    this.choices.addAll(choices);
+  public void setChoices(Map<String, UUID> choices) {
+    this.choices.putAll(choices);
   }
 
-  public void setOneChoice(Choice choice) {
-    this.choices.add(choice);
+  public void setChoice(String essenceOfChoice, UUID destinationNode) {
+    this.choices.put(essenceOfChoice, destinationNode);
   }
 
   @Override
@@ -78,63 +96,100 @@ public class Node {
       return false;
     }
 
+    var uuid = getNodeUuid();
+    if (uuid != null ? !uuid.equals(node.getNodeUuid())
+        : node.getNodeUuid() != null) {
+      return false;
+    }
+    if (!getStoryUuid().equals(node.getStoryUuid())) {
+      return false;
+    }
     if (!getNodeTitle().equals(node.getNodeTitle())) {
       return false;
     }
     if (!getContent().equals(node.getContent())) {
       return false;
     }
-    return getChoices() != null ? getChoices().equals(node.getChoices())
-        : node.getChoices() == null;
+    return getChoices().equals(node.getChoices());
   }
 
   @Override
   public int hashCode() {
-    int result = getNodeTitle().hashCode();
+    int result = getNodeUuid() != null ? getNodeUuid().hashCode() : 0;
+    result = 31 * result + getStoryUuid().hashCode();
+    result = 31 * result + getNodeTitle().hashCode();
     result = 31 * result + getContent().hashCode();
-    result = 31 * result + (getChoices() != null ? getChoices().hashCode() : 0);
+    result = 31 * result + getChoices().hashCode();
     return result;
-  }
-
-
-  public Builder builder() {
-    return new Builder(this);
   }
 
   public static final class Builder {
 
     private UUID nodeUuid;
+    private UUID storyUuid;
     private String nodeTitle;
     private String content;
-    private Set<Choice> choices;
+    private Map<String, UUID> choices;
 
     public Builder() {
     }
 
     public Builder(Node copy) {
       this.nodeUuid = copy.getNodeUuid();
+      this.storyUuid = copy.getStoryUuid();
       this.nodeTitle = copy.getNodeTitle();
       this.content = copy.getContent();
       this.choices = copy.getChoices();
     }
 
+    public Builder storyUuid(UUID val) throws OperationNotSupportedException {
+      if (this.storyUuid == null) {
+        storyUuid = Objects.requireNonNull(val);
+      } else {
+        throw new OperationNotSupportedException("Story's UUID is unchangeable!");
+      }
+      return this;
+    }
+
     public Builder nodeTitle(String val) {
-      nodeTitle = val;
+      if (val != null && (0 < val.length() && val.length() <= TITLE_LEN)) {
+        this.nodeTitle = val;
+      } else {
+        throw new IllegalArgumentException("Node's title length should be < 0 & > " + TITLE_LEN);
+      }
       return this;
     }
 
     public Builder content(String val) {
-      content = val;
+      if (val != null && (0 < val.length() && val.length() <= CONTENT_LEN)) {
+        this.content = val;
+      } else {
+        throw new IllegalArgumentException("Node's content length should be < 0 & > "
+            + CONTENT_LEN);
+      }
       return this;
     }
 
-    public Builder choices(Set<Choice> val) {
-      choices = val;
+    public Builder choices(Map<String, UUID> val) {
+      if (val.isEmpty()) {
+        throw new IllegalArgumentException("Map of choices can't be empty!");
+      }
+      if (this.choices == null) {
+        choices = val;
+      } else {
+        this.choices.putAll(val);
+      }
       return this;
     }
 
     public Node build() {
+      Objects.requireNonNull(storyUuid);
+      nodeTitle = Objects.requireNonNullElse(nodeTitle, "Default Node title.");
+      content = Objects.requireNonNullElse(content, "Default Node content.");
+      choices = Objects.requireNonNullElse(choices, Collections.<String, UUID>emptyMap());
       return new Node(this);
     }
   }
+
+
 }

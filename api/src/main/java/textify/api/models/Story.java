@@ -3,6 +3,7 @@ package textify.api.models;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.CollectionTable;
@@ -21,42 +22,46 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "stories")
 public class Story {
+  private static final int TITLE_LEN = 150;
+  private static final int DESCRIPTION_LEN = 1500;
 
-  @Column(name = "story_series_uuid", updatable = true, nullable = true, unique = true, length = 36)
+  @Column(name = "story_series_uuid", length = 36)
   private UUID storySeriesUuid;
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-  @Column(name = "story_uuid", updatable = false, nullable = false, unique = true, length = 36)
+  @Column(name = "story_uuid", updatable = false, nullable = true, unique = true, length = 36)
   private UUID storyUuid;
   @Column(name = "starting_node_uuid", updatable = true, nullable = true,
       unique = true, length = 36)
   private UUID startingNodeUuid;
-  @Column(name = "story_title", updatable = true, nullable = false, unique = false, length = 150)
+  @Column(name = "story_title", updatable = true, nullable = false, unique = false,
+      length = TITLE_LEN)
   private String storyTitle;
   @Column(name = "story_description", updatable = true, nullable = false,
-      unique = false, length = 1500)
+      unique = false, length = DESCRIPTION_LEN)
   private String storyDescription;
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "authors")
-  private Set<String> authors = new HashSet<>(2);
+  private Set<String> authors;
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "genres")
-  private Set<String> genres = new HashSet<>(3);
+  private Set<String> genres;
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "tags")
-  private Set<String> tags = new HashSet<>(3);
+  private Set<String> tags;
 
-  // TODO Set<Node>
-  @Column(name = "prod_time", updatable = false, nullable = false, length = 24)
+  // TODO Set<Node> or Set<UUID> thisStoryNodes? It will be huge object...
+  @Column(name = "prod_time", updatable = false, nullable = false)
   private Date productionDateTime;
-  @Column(name = "upd_time", updatable = true, nullable = false, length = 24)
+  @Column(name = "upd_time", updatable = true, nullable = false)
   private Date updatingDateTime;
 
   public Story() {}
 
   private Story(Builder builder) {
     storySeriesUuid = builder.storySeriesUuid;
+    storyUuid = builder.storyUuid;
     startingNodeUuid = builder.startingNodeUuid;
     storyTitle = builder.storyTitle;
     storyDescription = builder.storyDescription;
@@ -168,6 +173,7 @@ public class Story {
   public static final class Builder {
 
     private UUID storySeriesUuid;
+    private UUID storyUuid;
     private UUID startingNodeUuid;
     private String storyTitle;
     private String storyDescription;
@@ -189,6 +195,7 @@ public class Story {
      */
     public Builder(Story existing) {
       this.storySeriesUuid = existing.getStorySeriesUuid();
+      this.storyUuid = existing.getStoryUuid();
       this.startingNodeUuid = existing.getStartingNodeUuid();
       this.storyTitle = existing.getStoryTitle();
       this.storyDescription = existing.getStoryDescription();
@@ -199,26 +206,38 @@ public class Story {
     }
 
     public Builder storySeriesUuid(UUID val) {
-      storySeriesUuid = val;
+      storySeriesUuid = Objects.requireNonNull(val);
       return this;
     }
 
     public Builder startingNodeUuid(UUID val) {
-      startingNodeUuid = val;
+      startingNodeUuid = Objects.requireNonNull(val);
       return this;
     }
 
     public Builder storyTitle(String val) {
-      storyTitle = val;
+      if (val != null && (0 < val.length() && val.length() <= TITLE_LEN)) {
+        storyTitle = val;
+      } else {
+        throw new IllegalArgumentException("Story's title length should be < 0 & > " + TITLE_LEN);
+      }
       return this;
     }
 
     public Builder storyDescription(String val) {
-      storyDescription = val;
+      if (val != null && (0 < val.length() && val.length() <= DESCRIPTION_LEN)) {
+        storyDescription = val;
+      } else {
+        throw new IllegalArgumentException("Story's description length should be < 0 & > "
+            + DESCRIPTION_LEN);
+      }
       return this;
     }
 
     public Builder authors(Set<String> val) {
+      if (val.isEmpty()) {
+        throw new IllegalArgumentException("Set of authors can't be empty!");
+      }
       if (authors == null) {
         authors = val;
       } else {
@@ -228,6 +247,9 @@ public class Story {
     }
 
     public Builder genres(Set<String> val) {
+      if (val.isEmpty()) {
+        throw new IllegalArgumentException("Set of genres can't be empty!");
+      }
       if (genres == null) {
         genres = val;
       } else {
@@ -237,6 +259,9 @@ public class Story {
     }
 
     public Builder tags(Set<String> val) {
+      if (val.isEmpty()) {
+        throw new IllegalArgumentException("Set of tags can't be empty!");
+      }
       if (tags == null) {
         tags = val;
       } else {
@@ -246,6 +271,9 @@ public class Story {
     }
 
     public Story build() {
+      Objects.requireNonNull(storyTitle);
+      Objects.requireNonNull(storyDescription);
+      Objects.requireNonNull(authors);
       return new Story(this);
     }
   }

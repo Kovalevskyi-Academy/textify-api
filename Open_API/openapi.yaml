@@ -10,12 +10,15 @@ info:
 
 servers:
   - url: https://{environment}.textify.me/v1
+    description: Online servers.
     variables:
       environment:
-        default: api # Production server
+        default: api
         enum:
-          - api
-          - dev.api
+          - api # Production server
+          - dev.api # Developer server
+  - url: http://localhost:8080
+    description: Only for local testing when run `make -f textify.mk up` in root project's folder.
 
 paths:
   /stories:
@@ -75,7 +78,7 @@ paths:
                       $ref: './schemas/story.json#/properties/storyTitle'
                     storyDescription:
                       $ref: './schemas/story.json#/properties/storyDescription'
-                    storyAuthor:
+                    storyAuthors:
                       $ref: './schemas/story.json#/properties/authors'
 
   # Мы будем использовать и Path Parameters и Query Parameters
