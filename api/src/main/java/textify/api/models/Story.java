@@ -1,19 +1,22 @@
 package textify.api.models;
 
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -42,7 +45,7 @@ public class Story {
       unique = false, length = DESCRIPTION_LEN)
   private String storyDescription;
   @ElementCollection(fetch = FetchType.LAZY)
-  @CollectionTable(name = "authors")
+  @CollectionTable(name = "authors", joinColumns = @JoinColumn(name = "story_uuid"))
   private Set<String> authors;
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "genres")
@@ -52,8 +55,10 @@ public class Story {
   private Set<String> tags;
 
   // TODO Set<Node> or Set<UUID> thisStoryNodes? It will be huge object...
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "prod_time", updatable = false, nullable = false)
   private Date productionDateTime;
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "upd_time", updatable = true, nullable = false)
   private Date updatingDateTime;
 
@@ -157,7 +162,6 @@ public class Story {
   @Override
   public int hashCode() {
     int result = getStorySeriesUuid() != null ? getStorySeriesUuid().hashCode() : 0;
-    result = 31 * result + (getStoryUuid() != null ? getStoryUuid().hashCode() : 0);
     result = 31 * result + (getStartingNodeUuid() != null ? getStartingNodeUuid().hashCode() : 0);
     result = 31 * result + getStoryTitle().hashCode();
     result = 31 * result + getStoryDescription().hashCode();

@@ -1,20 +1,19 @@
 package textify.api.models;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.Table;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.naming.OperationNotSupportedException;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "nodes")
@@ -24,8 +23,7 @@ public class Node {
   private static final int CONTENT_LEN = 1500;
 
   @Id
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @GeneratedValue
   @Column(name = "node_uuid", updatable = false, nullable = false, unique = true, length = 36)
   private UUID nodeUuid;
   @Column(name = "story_uuid", updatable = false, nullable = false, unique = false, length = 36)
@@ -44,6 +42,7 @@ public class Node {
   // TODO maybe use @MapKeyJoinColumn(name = "current_node_id")
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "choices")
+  @MapKey(name = "choice_description")
   private Map<String, UUID> choices;
 
 
@@ -96,11 +95,6 @@ public class Node {
       return false;
     }
 
-    var uuid = getNodeUuid();
-    if (uuid != null ? !uuid.equals(node.getNodeUuid())
-        : node.getNodeUuid() != null) {
-      return false;
-    }
     if (!getStoryUuid().equals(node.getStoryUuid())) {
       return false;
     }
@@ -115,7 +109,7 @@ public class Node {
 
   @Override
   public int hashCode() {
-    int result = getNodeUuid() != null ? getNodeUuid().hashCode() : 0;
+    int result = 0;
     result = 31 * result + getStoryUuid().hashCode();
     result = 31 * result + getNodeTitle().hashCode();
     result = 31 * result + getContent().hashCode();
