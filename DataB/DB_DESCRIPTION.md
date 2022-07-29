@@ -17,10 +17,10 @@ Not today )))
 3. Run
    container : `docker run --rm --name postgres -p 5432:5432 -e POSTGRES_USER=testUSER -e POSTGRES_PASSWORD='testPASSWORD' -e POSTGRES_DB=testDB -d postgres:14.1-alpine3.15`
    .
-4. Connect to containerized PostgreSQL using CLI: `psql -U testUSER -d testDB -h 0.0.0.0` (**-h** —
+4. Connect to containerized PostgreSQL using CLI: `psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 0.0.0.0` (**-h** —
    it means HOST)
 
-You can connect to this container: `docker exec -it postgres sh`
+You can connect to running container: `docker exec -it container_id sh` and enter to DB: `psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 0.0.0.0`
 
 ## PostgreSQL & Kubernetes
 
