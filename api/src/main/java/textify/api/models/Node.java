@@ -1,19 +1,17 @@
 package textify.api.models;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.Table;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.naming.OperationNotSupportedException;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "nodes")
@@ -23,7 +21,8 @@ public class Node {
   private static final int CONTENT_LEN = 1500;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(/*generator = "UUID"*/)
+  /*@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")*/
   @Column(name = "node_uuid", updatable = false, nullable = false, unique = true, length = 36)
   private UUID nodeUuid;
   @Column(name = "story_uuid", updatable = false, nullable = false, unique = false, length = 36)
@@ -39,10 +38,10 @@ public class Node {
   https://javabydeveloper.com/mapping-collection-of-embeddablecomposite-types-jpa-with-hibernate/
    */
 
+
   // TODO maybe use @MapKeyJoinColumn(name = "current_node_id")
   @ElementCollection(fetch = FetchType.LAZY)
-  @CollectionTable(name = "choices")
-  @MapKey(name = "choice_description")
+  /*@CollectionTable(name = "choices")*/
   private Map<String, UUID> choices;
 
 
@@ -115,6 +114,17 @@ public class Node {
     result = 31 * result + getContent().hashCode();
     result = 31 * result + getChoices().hashCode();
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return """
+        Story UUID: %s
+        Node UUID: %s
+        Node Title: %s
+        Is there content: %s
+        Choices: %s
+        """.formatted(storyUuid, nodeUuid, nodeTitle, content != null, choices);
   }
 
   public static final class Builder {

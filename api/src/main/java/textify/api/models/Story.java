@@ -1,22 +1,21 @@
 package textify.api.models;
 
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -25,6 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "stories")
 public class Story {
+
   private static final int TITLE_LEN = 150;
   private static final int DESCRIPTION_LEN = 1500;
 
@@ -62,7 +62,8 @@ public class Story {
   @Column(name = "upd_time", updatable = true, nullable = false)
   private Date updatingDateTime;
 
-  public Story() {}
+  public Story() {
+  }
 
   private Story(Builder builder) {
     storySeriesUuid = builder.storySeriesUuid;
@@ -173,9 +174,26 @@ public class Story {
     return result;
   }
 
+  @Override
+  public String toString() {
+    return """
+        Story series uuid: %s
+        Story uuid: %s
+        Starting node uuid: %s
+        Story title: %s
+        Story description: %s
+        Authors: %s
+        Genres: %s
+        Tags: %s
+        """.formatted(storySeriesUuid, storyUuid, startingNodeUuid, storyTitle, storyDescription,
+        authors, genres, tags);
+  }
+
 
   public static final class Builder {
 
+    private final Date productionDateTime;
+    private final Date updatingDateTime = new Date();
     private UUID storySeriesUuid;
     private UUID storyUuid;
     private UUID startingNodeUuid;
@@ -184,16 +202,16 @@ public class Story {
     private Set<String> authors;
     private Set<String> genres;
     private Set<String> tags;
-    private final Date productionDateTime;
-    private final Date updatingDateTime = new Date();
 
-    /** For creating absolute clean story.
+    /**
+     * For creating absolute clean story.
      */
     public Builder() {
       this.productionDateTime = new Date();
     }
 
-    /** For modification existing story.
+    /**
+     * For modification existing story.
      *
      * @param existing story
      */

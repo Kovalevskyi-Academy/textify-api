@@ -7,25 +7,24 @@ import javax.persistence.RollbackException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import textify.api.models.Node;
+import textify.api.models.Story;
 
-public class NodeDao implements Dao<Node> {
-
+public class StoryDao implements Dao<Story> {
 
   @Override
-  public Optional<Node> get(UUID nodeUuid) {
+  public Optional<Story> get(UUID storyUuid) {
     // TODO Should I close the session after usage?
     // https://www.youtube.com/watch?v=emg94BI2Jao
-    var session = SESSION_FACTORY.openSession();
-    return Optional.ofNullable(session.get(Node.class, nodeUuid));
+    return Optional.ofNullable(SESSION_FACTORY.openSession().get(Story.class, storyUuid));
   }
 
   @Override
-  public UUID save(Node node) {
+  public UUID save(Story story) {
     UUID id = null;
     Transaction transaction = null;
     try (var session = SESSION_FACTORY.openSession()) {
       transaction = session.beginTransaction();
-      id = (UUID) session.save(node);
+      id = (UUID) session.save(story);
       transaction.commit();
     } catch (RollbackException e) {
       if (transaction != null) {
@@ -37,8 +36,7 @@ public class NodeDao implements Dao<Node> {
   }
 
   @Override
-  public void delete(List<UUID> nodeUuids) {
-
+  public void delete(List<UUID> storyUuids) {
     Transaction transaction = null;
 
     try (Session session = SESSION_FACTORY.openSession()) {
@@ -57,7 +55,7 @@ public class NodeDao implements Dao<Node> {
       q.executeUpdate();
 
        */
-      for (var uuid : nodeUuids) {
+      for (var uuid : storyUuids) {
         var node = session.get(Node.class, uuid);
         if (node != null) {
           session.delete(node);
