@@ -1,7 +1,6 @@
 # Ignored folders
 .idea/
 .git/
-api/target/
 Open_API/
 
 

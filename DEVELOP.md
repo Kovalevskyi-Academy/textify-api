@@ -21,7 +21,7 @@ And all of that takes off on Google services:
 1. Details about Google Cloud Build [look here](./CLOUDBUILD.md).
 2. Google Kubernetes Engine [look here](./k8b/K8b.md). (You can connect to the pod in the K8b.) ;)
 
-## UP and DOWN the project LOCALLY fo tests.
+## UP and DOWN the project LOCALLY fo tests (Docker Compose).
 ### requirements local
 - Docker Engine with Docker Compose Plugin (or Docker Desktop)
 - Java 17
@@ -31,9 +31,9 @@ And all of that takes off on Google services:
 
 ### Do up & do  down
 1. Run:
-   - just entire project in detached mod `make -f textify.mk up`.
+   - just entire project in detached mod `make -f textify.mk up`. **ATTENTION** The service will be alive even after the host restarting!
    - run & watch logs in textify-container (without detached mode) `make -f textify.mk test`
-   **ATTENTION** The service will be alive even after the host restarting!
+   
 2. Run: `make -f textify.mk down`. **ATTENTION** The server will be dead even after restarting the host.
 
 ### Check work
@@ -42,7 +42,7 @@ And all of that takes off on Google services:
 ### Connect to these working containers & watch them
 1. You can connect inside running container:
    - `docker ps`
-   - `docker exec -it CONTAINER_NAME or ID`
+   - `docker exec -it [CONTAINER_NAME or ID] sh`
 2. You can watch containers statistic:
    - for all running containers: `docker stats`
    - for specify containers: `docker stats CONTAINER1_NAME CONTAINER2_NAME`

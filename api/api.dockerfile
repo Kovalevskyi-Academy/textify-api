@@ -34,6 +34,6 @@ COPY ${DEPENDENCY}/BOOT-INF/classes /app
 #RUN true
 
 #1.
-ENTRYPOINT ["java","-cp","app:app/lib/*","textify.api.TextifyApiStarter"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","textify.api.Starter"]
 #2.
 #ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]

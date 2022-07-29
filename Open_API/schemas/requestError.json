@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "requestError.json",
   "title": "Request error",
   "type": "object",
   "description": "A generic error object resulting from an API call.",
