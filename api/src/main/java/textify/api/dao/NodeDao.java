@@ -15,17 +15,15 @@ public class NodeDao implements Dao<Node> {
   public Optional<Node> get(UUID nodeUuid) {
     // TODO Should I close the session after usage?
     // https://www.youtube.com/watch?v=emg94BI2Jao
-    var session = SESSION_FACTORY.openSession();
-    return Optional.ofNullable(session.get(Node.class, nodeUuid));
+    return Optional.ofNullable(SESSION_FACTORY.openSession().get(Node.class, nodeUuid));
   }
 
   @Override
   public UUID save(Node node) {
-    UUID id = null;
     Transaction transaction = null;
     try (var session = SESSION_FACTORY.openSession()) {
       transaction = session.beginTransaction();
-      id = (UUID) session.save(node);
+      session.persist(node);
       transaction.commit();
     } catch (RollbackException e) {
       if (transaction != null) {
@@ -33,7 +31,7 @@ public class NodeDao implements Dao<Node> {
       }
       e.printStackTrace();
     }
-    return id;
+    return node.getNodeUuid();
   }
 
   @Override

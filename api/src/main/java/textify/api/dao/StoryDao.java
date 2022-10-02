@@ -20,11 +20,10 @@ public class StoryDao implements Dao<Story> {
 
   @Override
   public UUID save(Story story) {
-    UUID id = null;
     Transaction transaction = null;
     try (var session = SESSION_FACTORY.openSession()) {
       transaction = session.beginTransaction();
-      id = (UUID) session.save(story);
+      session.persist(story);
       transaction.commit();
     } catch (RollbackException e) {
       if (transaction != null) {
@@ -32,7 +31,7 @@ public class StoryDao implements Dao<Story> {
       }
       e.printStackTrace();
     }
-    return id;
+    return story.getStoryUuid();
   }
 
   @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import textify.api.dao.Dao;
 import textify.api.dao.NodeDao;
 import textify.api.dao.StoryDao;
 import textify.api.models.Node;
@@ -16,7 +17,13 @@ public class Starter {
   public static void main(String[] args) {
     System.out.println("helloWorld");
     // testing Node in DB
-    StoryDao storyDao = new StoryDao();
+    System.out.println("TESTS");
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    Dao<Story> storyDao = new StoryDao();
     var uuidOfStorySeries = UUID.randomUUID();
     var expectedFirstStory = ForTests.getFirstStory(uuidOfStorySeries);
     var expectedSecondStory = ForTests.getSecondStory(uuidOfStorySeries);
@@ -49,7 +56,7 @@ public class Starter {
     System.out.println("Second NODE is equals to expected: "
         + expectedSecondNode.equals(actualNode2.orElse(emptyNode)));
 
-    System.out.println("Add to stories starting nodes!");
+    System.out.println("\n#####Add to stories starting nodes!");
     expectedFirstStory = ForTests.addStartingNodeToStory(expectedFirstStory, nodeUuid1);
     expectedSecondStory = ForTests.addStartingNodeToStory(expectedSecondStory, nodeUuid2);
 
@@ -59,7 +66,7 @@ public class Starter {
     // TODO made update stories in DB
 
     try {
-      Thread.sleep(10000);
+      Thread.sleep(5000);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

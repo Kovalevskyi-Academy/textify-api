@@ -17,15 +17,15 @@ import textify.api.models.Story;
  */
 public interface Dao<T> {
 
-  SessionFactory SESSION_FACTORY = initSessionFactory();
+  static final SessionFactory SESSION_FACTORY = initSessionFactoryFromCode();
 
-  private static SessionFactory initSessionFactory() {
+  private static SessionFactory initSessionFactoryFromCode() {
     var serviceBuilder = new StandardServiceRegistryBuilder();
 
     var standardRegistry = serviceBuilder
         .applySetting("hibernate.connection.driver_class", "org.postgresql.Driver")
         .applySetting("hibernate.connection.url", System.getenv("DB_URL"))
-        .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect")
+        .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect")
         .applySetting("hibernate.show_sql", "true")
         .applySetting("hibernate.hbm2ddl.auto", "update" /*"create"*/)
         .applySetting("hibernate.connection.username", System.getenv("POSTGRES_USER"))
@@ -41,6 +41,7 @@ public interface Dao<T> {
     //StandardServiceRegistryBuilder.destroy(standardRegistry);
     return tempSessionFactory;
   }
+
 
   Optional<T> get(UUID uuid);
 
