@@ -20,7 +20,7 @@ spec:
       terminationGracePeriodSeconds: 20
       containers:
         - name: pg #DNS_LABLE
-          image: postgres:14.1-alpine3.15
+          image: postgres:14.5-alpine3.16
           imagePullPolicy: IfNotPresent
           ports:
             - name: db
@@ -45,11 +45,11 @@ spec:
                 - "/bin/sh"
                 - "-c"
                 - | 
-                - psql -U $POSTGRES_USER -d $POSTGRES_DB -c 'SELECT 1'
-            initialDelaySeconds: 20
-            timeoutSeconds: 3
-            failureThreshold: 3
-            periodSeconds: 5
+                - psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+            periodSeconds: 40
             successThreshold: 1
 
   volumeClaimTemplates:

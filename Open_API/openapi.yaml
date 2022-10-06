@@ -21,6 +21,107 @@ servers:
     description: Only for local testing when run `make -f textify.mk up` in root project's folder.
 
 paths:
+  /nodes:
+    parameters:
+      - name: storyUuid
+        in: path
+        required: true
+        description: Unique identifier of some story.
+        schema:
+          $ref: './schemas/story.json#/properties/storyUuid'
+    post:
+      tags:
+        - node
+      summary: Create one unique node.
+      requestBody:
+        description: Take **node** object from JSON & create unique record in DB. Should be input node's uuid `-1`?
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/node.json'
+      responses:
+        '201':
+          description: Node created. **Returning** UUID.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/node.json#/properties/nodeUuid'
+        '4XX':
+          description: Any problems with creating record in DB.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/requestError.json'
+              example:
+                message: Yur node-object is broken!
+        '5XX':
+          description: Some unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/requestError.json'
+              example:
+                message: It's an magic error! Perhaps Merlin can help.
+
+
+  # А что если не задавать айдишник истории? Ведь он и так храниться в каждой ноде...
+  # Или, как я помню, нужно выпилить привязку ноды к истории в самой ноде, а нужно просто
+  # для каждой истории создавать свою таблицу с нодами?
+  /nodes/{nodeUuid}:
+    parameters:
+      - name: storyUuid
+        in: path
+        required: true
+        description: Unique identifier of some story.
+        schema:
+          $ref: './schemas/story.json#/properties/storyUuid'
+      - name: nodeUuid
+        in: path
+        required: true
+        description: Unique identifier of some node.
+        schema:
+          $ref: './schemas/node.json#/properties/nodeUuid'
+    get:
+      tags:
+        - node
+      summary: Get one specified node from the specified story.
+      responses:
+        '200':
+          description: Only if this specified node is present in specified story.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/node.json'
+        '404':
+          description: There is no node with the specified UUID.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/requestError.json'
+              example:
+                message: Yur node-object not found!
+    delete:
+      tags:
+        - node
+      summary: Deletes specified node from specified specified story.
+      responses:
+        '200':
+          description: Story removed!
+        '404':
+          description: If story or node not found.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/requestError.json'
+              examples:
+                storyNotFound:
+                  value:
+                    message: Requested story not found.
+                nodeNotFound:
+                  value:
+                    message: Requested node not found.
+
   /stories:
     post:
       tags:
@@ -134,103 +235,4 @@ paths:
         '200':
           description: Story removed!
 
-  /stories/{storyUuid}/nodes/:
-    parameters:
-      - name: storyUuid
-        in: path
-        required: true
-        description: Unique identifier of some story.
-        schema:
-          $ref: './schemas/story.json#/properties/storyUuid'
-    post:
-      tags:
-        - node
-      summary: Create one unique node.
-      requestBody:
-        description: Take **node** object from JSON & create unique record in DB. Should be input node's uuid `-1`?
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas/node.json'
-      responses:
-        '201':
-          description: Node created. **Returning** UUID.
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/node.json#/properties/nodeUuid'
-        '4XX':
-          description: Any problems with creating record in DB.
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/requestError.json'
-              example:
-                message: Yur node-object is broken!
-        '5XX':
-          description: Some unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/requestError.json'
-              example:
-                message: It's an magic error! Perhaps Merlin can help.
 
-
-  # А что если не задавать айдишник истории? Ведь он и так храниться в каждой ноде...
-  # Или, как я помню, нужно выпилить привязку ноды к истории в самой ноде, а нужно просто
-  # для каждой истории создавать свою таблицу с нодами?
-  /stories/{storyUuid}/nodes/{nodeUuid}:
-    parameters:
-      - name: storyUuid
-        in: path
-        required: true
-        description: Unique identifier of some story.
-        schema:
-          $ref: './schemas/story.json#/properties/storyUuid'
-      - name: nodeUuid
-        in: path
-        required: true
-        description: Unique identifier of some node.
-        schema:
-          $ref: './schemas/node.json#/properties/nodeUuid'
-    get:
-      tags:
-        - node
-      summary: Get one specified node from the specified story.
-      responses:
-        '200':
-          description: Only if this specified node is present in specified story.
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/node.json'
-        '404':
-          description: There is no node with the specified UUID.
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/requestError.json'
-              example:
-                message: Yur node-object not found!
-    delete:
-      tags:
-        - node
-      summary: Deletes specified node from specified specified story.
-      responses:
-        '200':
-          description: Story removed!
-        '404':
-          description: If story or node not found.
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/requestError.json'
-              examples:
-                storyNotFound:
-                  value:
-                    message: Requested story not found.
-                nodeNotFound:
-                  value:
-                    message: Requested node not found.

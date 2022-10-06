@@ -1,4 +1,4 @@
-package textify.api.services;
+package textify.api.controllers;
 
 import java.util.HashMap;
 import java.util.Set;

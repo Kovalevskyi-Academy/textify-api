@@ -3,6 +3,7 @@ package textify.api.dao;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.persistence.EntityNotFoundException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -17,15 +18,15 @@ import textify.api.models.Story;
  */
 public interface Dao<T> {
 
-  SessionFactory SESSION_FACTORY = initSessionFactory();
+  static final SessionFactory SESSION_FACTORY = initSessionFactoryFromCode();
 
-  private static SessionFactory initSessionFactory() {
+  private static SessionFactory initSessionFactoryFromCode() {
     var serviceBuilder = new StandardServiceRegistryBuilder();
 
     var standardRegistry = serviceBuilder
         .applySetting("hibernate.connection.driver_class", "org.postgresql.Driver")
         .applySetting("hibernate.connection.url", System.getenv("DB_URL"))
-        .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect")
+        .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect")
         .applySetting("hibernate.show_sql", "true")
         .applySetting("hibernate.hbm2ddl.auto", "update" /*"create"*/)
         .applySetting("hibernate.connection.username", System.getenv("POSTGRES_USER"))
@@ -42,10 +43,13 @@ public interface Dao<T> {
     return tempSessionFactory;
   }
 
-  Optional<T> get(UUID uuid);
 
   UUID save(T entity);
 
-  void delete(List<UUID> uuids);
+  T get(UUID uuid);
+
+  boolean merge(T entity);
+
+  boolean delete(UUID uuid) throws EntityNotFoundException;
 
 }
