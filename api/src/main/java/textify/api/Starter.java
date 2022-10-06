@@ -32,6 +32,7 @@ public class Starter {
     System.out.println(firstNodeUuid);
     System.out.println("Try to find FIRST NODE in DB: ");
     System.out.println(nodeDao.get(firstNodeUuid));
+
   }
 
   private static void testDaoLayer() {
