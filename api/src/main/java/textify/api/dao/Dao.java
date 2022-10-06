@@ -3,6 +3,7 @@ package textify.api.dao;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.persistence.EntityNotFoundException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -43,10 +44,12 @@ public interface Dao<T> {
   }
 
 
-  Optional<T> get(UUID uuid);
-
   UUID save(T entity);
 
-  void delete(List<UUID> uuids);
+  T get(UUID uuid);
+
+  boolean merge(T entity);
+
+  boolean delete(UUID uuid) throws EntityNotFoundException;
 
 }
