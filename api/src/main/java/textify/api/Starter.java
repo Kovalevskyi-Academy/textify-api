@@ -1,5 +1,6 @@
 package textify.api;
 
+import java.util.Date;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.boot.SpringApplication;
@@ -16,14 +17,15 @@ public class Starter {
 
   public static void main(String[] args) {
     // testDaoLayer();
-    SpringApplication.run(Starter.class);
-    prepareDatabase();
+    SpringApplication.run(Starter.class, args);
+    // shortDaoTest();
 
+    System.out.println("STARTER: " + new Date(System.currentTimeMillis()));
     System.out.println("Service started!");
 
   }
 
-  private static void prepareDatabase() {
+  private static void shortDaoTest() {
     System.out.println("PREPARING DATABASE");
 
     Dao<Node> nodeDao = new NodeDao();
