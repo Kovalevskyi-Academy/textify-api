@@ -1,0 +1,10 @@
+{
+  "nodeUuid": null,
+  "storyUuid": "fa2c2a87-e04c-4c7e-8bcc-a4c86514e5b0",
+  "nodeTitle": "First node",
+  "content": "It is node's content of first node.",
+  "choices": {
+    "First choice for first node": "e5205d6c-d3a9-4957-812a-bb6bcee3f916",
+    "Second choice for first node": "8c3c8b7e-d082-43ed-ba56-1dac2039f1e5"
+  }
+}
