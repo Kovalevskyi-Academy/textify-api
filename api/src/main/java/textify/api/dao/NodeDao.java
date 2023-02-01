@@ -5,7 +5,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.annotations.NotFound;
 import textify.api.models.Node;
 
 public class NodeDao implements Dao<Node> {
@@ -39,7 +38,8 @@ public class NodeDao implements Dao<Node> {
     Transaction transaction = null;
     try (var session = SESSION_FACTORY.openSession()) {
       transaction = session.beginTransaction();
-      session.merge(node);
+      var result = (Node) session.merge(node);
+      System.out.println(result.toString());
       session.getTransaction().commit();
     } catch (RollbackException e) {
       if (transaction != null) {
@@ -72,7 +72,7 @@ public class NodeDao implements Dao<Node> {
 
        */
 
-      var node = session.get(Node.class, nodeUuid);
+      var node = session.find(Node.class, nodeUuid);
       if (node != null) {
         session.delete(node);
       } else {

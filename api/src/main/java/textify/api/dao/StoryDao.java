@@ -5,8 +5,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import textify.api.models.Node;
 import textify.api.models.Story;
+
 
 public class StoryDao implements Dao<Story> {
 

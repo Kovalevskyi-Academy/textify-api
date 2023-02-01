@@ -1,16 +1,19 @@
 package textify.api.models;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.naming.OperationNotSupportedException;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -25,7 +28,7 @@ public class Node {
   /*@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")*/
   @Column(name = "node_uuid", updatable = false, nullable = false, unique = true, length = 36)
   private UUID nodeUuid;
-  @Column(name = "story_uuid", updatable = false, nullable = false, unique = false, length = 36)
+  @Column(name = "story_uuid", updatable = true, nullable = true, unique = false, length = 36)
   private UUID storyUuid;
   @Column(name = "node_title", updatable = true, nullable = false, unique = false,
       length = TITLE_LEN)
@@ -41,8 +44,8 @@ public class Node {
 
   // TODO maybe use @MapKeyJoinColumn(name = "current_node_id")
   @ElementCollection(fetch = FetchType.LAZY)
-  /*@CollectionTable(name = "choices")*/
-  private Map<String, UUID> choices;
+  @CollectionTable(name = "node_choices", joinColumns = @JoinColumn(name = "father_node"))
+  private Map<String, UUID> choices = new HashMap<>();
 
 
   public Node() {

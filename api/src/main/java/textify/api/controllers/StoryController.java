@@ -1,6 +1,7 @@
 package textify.api.controllers;
 
 
+import java.util.Date;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -11,38 +12,43 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import textify.api.dao.Dao;
 import textify.api.dao.StoryDao;
 import textify.api.models.Story;
 
 @RestController
-@RequestMapping(path = "/stories")
 public class StoryController {
 
-  private static final Dao<Story> storyDao = new StoryDao();
+  private final Dao<Story> storyDao = new StoryDao();
 
   @PostMapping(path = "/stories")
-  private static @ResponseBody UUID createStory(@RequestBody Story story) {
-    return storyDao.save(story);
+  public ResponseEntity<UUID> createStory(@RequestBody Story story) {
+    UUID result = null;
+    try {
+      result = storyDao.save(story);
+    } catch (Exception ignore) {
+      // is it need to remove this try-catch?
+    }
+    return result != null ? new ResponseEntity<>(result, HttpStatus.CREATED)
+        : new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);
   }
 
   @GetMapping(path = "/stories/{storyUuid}")
-  private static @ResponseBody Story readStory(@PathVariable UUID storyUuid) {
-    return storyDao.get(storyUuid);
+  public ResponseEntity<Story> readStory(@PathVariable UUID storyUuid) {
+    var story = storyDao.get(storyUuid);
+    return story != null ? new ResponseEntity<>(story, HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @PutMapping(path = "/stories")
-  private static ResponseEntity<?> updateStory(@RequestBody Story story) {
-    var isUpdated = storyDao.merge(story);
-    return isUpdated ? new ResponseEntity<>(HttpStatus.OK)
+  public ResponseEntity<Story> updateStory(@RequestBody Story story) {
+    return storyDao.merge(story) ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
-  @DeleteMapping(path = "/nodes/{storyUuid}")
-  private static ResponseEntity<?> deleteStory(@PathVariable(name = "storyUuid") UUID storyUuid) {
+  @DeleteMapping(path = "/stories/{storyUuid}")
+  public ResponseEntity<Story> deleteStory(@PathVariable(name = "storyUuid") UUID storyUuid) {
     boolean isDeleted = false;
     try {
       isDeleted = storyDao.delete(storyUuid);
