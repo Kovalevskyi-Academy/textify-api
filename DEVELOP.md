@@ -1,6 +1,6 @@
 # Introduction to the dev
 
-Models in this project based on JSON schemas. [Details here](./Open_API/schemas/MODEL_SCHEMAS.md).
+Models in this project based on JSON schemas. [Details here](Open_API/MODEL_SCHEMAS.md).
 
 API of this project based on OpenAPI.
 More details [here](./Open_API/OpenAPI.md).

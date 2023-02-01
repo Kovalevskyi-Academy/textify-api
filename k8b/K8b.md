@@ -4,7 +4,17 @@ _**First you should be familiar with Docker. It is base knowledge!**_
 That's our K8b schema:
 ![K8b_schema.png](./screenshots/K8b_schema.png)
 
-## Manual GKE Usage (Learning in the end of this file)
+## Manual GKE Usage from local machine (Learning in the end of this file)
+## Preparing
+1. Manual (no pkg managers) installing google-cloud-cli, you can use [interactive installer](https://cloud.google.com/sdk/docs/downloads-interactive)
+2. Install gcloud component 'kubectl': `gcloud components install kubectl`
+3. `gcloud init` and choose the desired project (prod-rest)
+4. You have already the cluster! (my-autopilot-cluster)
+5. Get credentials for your cluster: `gcloud container clusters get-credentials CLUSTER_NAME --region CLUSTER_LOCATION`
+   example: `gcloud container clusters get-credentials my-autopilot-cluster --region europe-north1`
+6. Run K8b commands below
+
+## Usage Note: all commands run from repo root
 1. Deploy DB — postgresSQL
    first: `kubectl apply -f ./k8b/db/pg-config.yaml -f ./k8b/db/pg-deploy.yaml -f ./k8b/db/pg-service.yaml` or `kubectl apply -f ./k8b/db/`
 2. Deploy rest-api: `kubectl apply -f ./k8b/rest/rest-deploy.yaml -f ./k8b/rest/rest-service.yaml` or `kubectl apply -f ./k8b/rest/`

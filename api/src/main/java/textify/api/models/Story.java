@@ -37,7 +37,7 @@ public class Story {
   @Column(name = "story_uuid", updatable = false, nullable = true, unique = true, length = 36)
   private UUID storyUuid;
   @Column(name = "starting_node_uuid", updatable = true, nullable = true,
-      unique = true, length = 36)
+      unique = false, length = 36)
   private UUID startingNodeUuid;
   @Column(name = "story_title", updatable = true, nullable = false, unique = false,
       length = TITLE_LEN)

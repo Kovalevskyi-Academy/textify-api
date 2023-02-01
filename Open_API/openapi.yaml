@@ -28,7 +28,7 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: './schemas/story.json#/properties/storyUuid'
+          $ref: 'story.json#/properties/storyUuid'
     post:
       tags:
         - node
@@ -39,20 +39,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas/node.json'
+              $ref: 'node.json'
       responses:
         '201':
           description: Node created. **Returning** UUID.
           content:
             application/json:
               schema:
-                $ref: './schemas/node.json#/properties/nodeUuid'
+                $ref: 'node.json#/properties/nodeUuid'
         '4XX':
           description: Any problems with creating record in DB.
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               example:
                 message: Yur node-object is broken!
         '5XX':
@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -75,13 +75,13 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: './schemas/story.json#/properties/storyUuid'
+          $ref: 'story.json#/properties/storyUuid'
       - name: nodeUuid
         in: path
         required: true
         description: Unique identifier of some node.
         schema:
-          $ref: './schemas/node.json#/properties/nodeUuid'
+          $ref: 'node.json#/properties/nodeUuid'
     get:
       tags:
         - node
@@ -92,13 +92,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/node.json'
+                $ref: 'node.json'
         '404':
           description: There is no node with the specified UUID.
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               example:
                 message: Yur node-object not found!
     delete:
@@ -113,7 +113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               examples:
                 storyNotFound:
                   value:
@@ -133,20 +133,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas/story.json'
+              $ref: 'story.json'
       responses:
         '201':
           description: Story created. **Returning** UUID.
           content:
             application/json:
               schema:
-                $ref: './schemas/story.json#/properties/storyUuid'
+                $ref: 'story.json#/properties/storyUuid'
         '4XX':
           description: Any problems with creating record in DB.
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               example:
                 message: Yur story-object is broken!
         '5XX':
@@ -154,7 +154,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
               example:
                 message: It's an magic error! Perhaps Merlin can help.
 
@@ -174,13 +174,13 @@ paths:
                   type: object
                   properties:
                     storyUuid:
-                      $ref: './schemas/story.json#/properties/storyUuid'
+                      $ref: 'story.json#/properties/storyUuid'
                     storyTitle:
-                      $ref: './schemas/story.json#/properties/storyTitle'
+                      $ref: 'story.json#/properties/storyTitle'
                     storyDescription:
-                      $ref: './schemas/story.json#/properties/storyDescription'
+                      $ref: 'story.json#/properties/storyDescription'
                     storyAuthors:
-                      $ref: './schemas/story.json#/properties/authors'
+                      $ref: 'story.json#/properties/authors'
 
   # Мы будем использовать и Path Parameters и Query Parameters
   # читаем тут: https://swagger.io/docs/specification/describing-parameters/
@@ -191,7 +191,7 @@ paths:
         required: true
         description: Unique identifier of some story.
         schema:
-          $ref: './schemas/story.json#/properties/storyUuid'
+          $ref: 'story.json#/properties/storyUuid'
     get:
       tags:
         - story
@@ -202,13 +202,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/story.json'
+                $ref: 'story.json'
         '404':
           description: There is no story with the specified UUID.
           content:
             application/json:
               schema:
-                $ref: './schemas/requestError.json'
+                $ref: 'requestError.json'
     patch:
       tags:
         - story
@@ -221,8 +221,8 @@ paths:
           application/json:
             schema:
               anyOf:
-                - $ref: './schemas/story.json'
-                - $ref: './schemas/story.json#/properties/authors'
+                - $ref: 'story.json'
+                - $ref: 'story.json#/properties/authors'
       responses:
         '501':
           description: Not supported yet.

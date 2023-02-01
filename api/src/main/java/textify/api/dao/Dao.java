@@ -1,7 +1,5 @@
 package textify.api.dao;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.hibernate.SessionFactory;
@@ -28,7 +26,7 @@ public interface Dao<T> {
         .applySetting("hibernate.connection.url", System.getenv("DB_URL"))
         .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect")
         .applySetting("hibernate.show_sql", "true")
-        .applySetting("hibernate.hbm2ddl.auto", "update" /*"create"*/)
+        .applySetting("hibernate.hbm2ddl.auto", /*"update"*/ "create")
         .applySetting("hibernate.connection.username", System.getenv("POSTGRES_USER"))
         .applySetting("hibernate.connection.password", System.getenv("POSTGRES_PASSWORD"))
         .build();

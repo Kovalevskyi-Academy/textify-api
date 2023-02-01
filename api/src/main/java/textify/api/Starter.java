@@ -19,10 +19,6 @@ public class Starter {
     // testDaoLayer();
     SpringApplication.run(Starter.class, args);
     // shortDaoTest();
-
-    System.out.println("STARTER: " + new Date(System.currentTimeMillis()));
-    System.out.println("Service started!");
-
   }
 
   private static void shortDaoTest() {
