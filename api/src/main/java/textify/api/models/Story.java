@@ -1,6 +1,7 @@
 package textify.api.models;
 
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class Story {
   @Column(name = "story_uuid", updatable = false, nullable = true, unique = true, length = 36)
   private UUID storyUuid;
   @Column(name = "starting_node_uuid", updatable = true, nullable = true,
-      unique = true, length = 36)
+      unique = false, length = 36)
   private UUID startingNodeUuid;
   @Column(name = "story_title", updatable = true, nullable = false, unique = false,
       length = TITLE_LEN)
@@ -56,10 +57,10 @@ public class Story {
 
   // TODO Set<Node> or Set<UUID> thisStoryNodes? It will be huge object...
   @Temporal(TemporalType.TIMESTAMP)
-  @Column(name = "prod_time", updatable = false, nullable = false)
+  @Column(name = "prod_time", updatable = false, nullable = true)
   private Date productionDateTime;
   @Temporal(TemporalType.TIMESTAMP)
-  @Column(name = "upd_time", updatable = true, nullable = false)
+  @Column(name = "upd_time", updatable = true, nullable = true)
   private Date updatingDateTime;
 
   public Story() {
@@ -193,7 +194,7 @@ public class Story {
   public static final class Builder {
 
     private final Date productionDateTime;
-    private final Date updatingDateTime = new Date();
+    private final Date updatingDateTime = new Timestamp(System.currentTimeMillis());
     private UUID storySeriesUuid;
     private UUID storyUuid;
     private UUID startingNodeUuid;
@@ -207,7 +208,7 @@ public class Story {
      * For creating absolute clean story.
      */
     public Builder() {
-      this.productionDateTime = new Date();
+      this.productionDateTime = new Timestamp(System.currentTimeMillis());
     }
 
     /**
@@ -293,6 +294,7 @@ public class Story {
     }
 
     public Story build() {
+      System.out.println("BUILDER POST: " + productionDateTime);
       Objects.requireNonNull(storyTitle);
       Objects.requireNonNull(storyDescription);
       Objects.requireNonNull(authors);

@@ -7,3 +7,4 @@ output/
 # files
 *.iml
 .DS_Store
+temp*

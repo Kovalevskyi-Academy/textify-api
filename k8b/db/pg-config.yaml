@@ -6,9 +6,8 @@ metadata:
   labels:
     app: pg
 data:
-  # TODO fix security!
   POSTGRES_DB: testDB
-  DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+  DB_URL: jdbc:postgresql://postgres:5432/testDB
   POSTGRES_USER: testUSER
   POSTGRES_PASSWORD: testPASSWORD
   PGDATA: /data/pgdata

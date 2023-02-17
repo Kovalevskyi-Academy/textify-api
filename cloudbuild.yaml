@@ -8,19 +8,19 @@ substitutions:
   _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
 
 steps:
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+  - name: 'maven:3-eclipse-temurin-17-alpine'
     id: validate-code
     waitFor: ['-']
     entrypoint: 'mvn'
     args: [ 'validate' ]
     dir: 'api'
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+  - name: 'maven:3-eclipse-temurin-17-alpine'
     id: do-unit-tests
     waitFor: ['-']
     entrypoint: 'mvn'
     args: [ 'test' ]
     dir: 'api'
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+  - name: 'maven:3-eclipse-temurin-17-alpine'
     id: build-jar
     waitFor: ['do-unit-tests']
     entrypoint: 'mvn'
@@ -34,21 +34,23 @@ steps:
     dir: 'api'
 
   # Unpack the jar according to the Spring documentation.
-  - name: 'maven:3.8.4-eclipse-temurin-17-alpine'
+  - name: 'maven:3-eclipse-temurin-17-alpine'
     id: unpack-jar
     waitFor: ['build-jar']
     entrypoint: 'bash'
     args: ['-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"']
     dir: 'api'
+
   # Pull previous our container build & use it in next step
-  - name: 'docker:20.10.12-alpine3.15'
+  - name: 'docker:23.0.0-rc.4-alpine3.17'
     id: pull-previous-container
     waitFor: ['build-jar']
     entrypoint: 'sh'
     args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
     dir: 'api'
+
   # Build new container using layers from previous step.
-  - name: 'docker:20.10.12-alpine3.15'
+  - name: 'docker:23.0.0-rc.4-alpine3.17'
     id: build-new-container
     waitFor: ['unpack-jar', 'pull-previous-container']
     args: ['build',
@@ -59,8 +61,9 @@ steps:
            '-f', 'api.dockerfile',
            '.']
     dir: 'api'
+
   # Push image to artifact registry
-  - name: 'docker:20.10.12-alpine3.15'
+  - name: 'docker:23.0.0-rc.4-alpine3.17'
     id: push-to-GCAR
     waitFor: ['build-new-container']
     args: [ 'push', '--all-tags', '${_IMAGE}']
@@ -81,7 +84,6 @@ steps:
     entrypoint: 'bash'
     # TODO fix security!
     args: ['./scripts/test_db.sh']
-    
 
   # Run REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -93,13 +95,15 @@ steps:
            '--filename', './k8b/rest/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster' ]
+
   # Test REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: test-REST-API
     waitFor:
       - 'deploy-rest'
     entrypoint: 'bash'
-    args: ['./scripts/test_rest_api.sh']
+    args: ['./test_rest_api.sh']
+    dir: 'scripts'
 
   # Delete REST-API from GKE
   - name: 'gcr.io/cloud-builders/gke-deploy'
