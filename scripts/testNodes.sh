@@ -13,7 +13,6 @@ failAttempt=0
 waitTime=3
 while [ "${responseStatus}" != "201" ]
 do
-  sleep "${waitTime}"s
   echo "-> attempt # ${failAttempt}"
   #printf "WORKDIR: %s" "$(ls ./*/)"
   curl \
@@ -22,8 +21,9 @@ do
     -H "Content-Type: application/json" \
     -w "%{http_code}" > responceNode.txt \
     -o nodeUUID.txt \
-    -m 15 \
+    -m "${waitTime}" \
     -v || true #2>/dev/null
+  sleep "${waitTime}"s
   responseStatus=$(<responceNode.txt)
   printf "\n responseStatus: %s\n" "${responseStatus}"
   if [ "${failAttempt}" -gt 10 ]
@@ -41,7 +41,6 @@ failAttempt=0
 waitTime=3
 while [ "${responseStatus}" != "200" ]
 do
-  sleep "${waitTime}"s
   actualUuid=$(tr <nodeUUID.txt -d \")
   printf "\n#Do GET to %s/nodes/%s   → attempt#%s\n" "${url}" "${actualUuid}" "${failAttempt}"
   curl "${url}/nodes/${actualUuid}" -s \
@@ -50,6 +49,7 @@ do
     -m "${waitTime}" \
     -v || true
     #2>/dev/null
+  sleep "${waitTime}"s
   responseStatus=$(<responceNode.txt)
   if [ "${failAttempt}" -gt 5 ]
     then

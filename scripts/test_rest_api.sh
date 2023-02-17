@@ -33,9 +33,9 @@ failAttempt=0
 waitTime=3
 while [ "${responseStatus}" != "200" ]
 do
-  sleep "${waitTime}"s
   echo "-> attempt # ${failAttempt}"
   curl "${url}/test" -m "${waitTime}" -w "%{http_code}" > responce.txt || true
+  sleep "${waitTime}"s
   responseStatus=$(<responce.txt)
   printf "\n responseStatus: %s\n" "${responseStatus}"
   failAttempt=$(( "${failAttempt}" + 1))
