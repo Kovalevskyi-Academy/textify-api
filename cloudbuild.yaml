@@ -7,6 +7,15 @@ substitutions:
   # $REPO_NAME means GitHub's repo name. It will be container name
   _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
 
+availableSecrets:
+  secretManager:
+    - versionName: projects/366663102857/secrets/PG-DEV-DB-NAME/versions/1
+      env: 'PG_DEV_DB_NAME'
+    - versionName: projects/366663102857/secrets/PG-DEV-PASS/versions/1
+      env: 'PG_DEV_PASS'
+    - versionName: projects/366663102857/secrets/PG-DEV-USERNAME/versions/1
+      env: 'PG_DEV_USERNAME'
+
 steps:
   - name: 'maven:3-eclipse-temurin-17-alpine'
     id: validate-code
@@ -77,13 +86,14 @@ steps:
            '--filename', './k8b/db/',
            '--location', 'europe-north1',
            '--cluster', 'my-autopilot-cluster']
+
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: test-db
     waitFor: ['deploy-db']
     entrypoint: 'bash'
-    # TODO fix security!
     args: ['./scripts/test_db.sh']
+    secretEnv: ['PG_DEV_DB_NAME', 'PG_DEV_USERNAME']
 
   # Run REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'

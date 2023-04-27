@@ -18,6 +18,6 @@ do
 done
 
 echo "PG IS STARTED!"
-# TODO fix secrets!
-kubectl exec "${pg_pod_name}" -- /bin/sh -c 'pgbench -i -U testUSER -d testDB'
+
+kubectl exec "${pg_pod_name}" -- /bin/sh -c "pgbench -i -U ${PG_DEV_USERNAME} -d ${PG_DEV_DB_NAME}"
 echo "DB TEST SUCCESS"

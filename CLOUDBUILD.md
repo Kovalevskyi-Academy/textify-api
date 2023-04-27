@@ -8,3 +8,7 @@ Ever commit in main branch or ever Pull Request — Google Cloud Build do:
   - delete the project from Kubernetes cluster (**WARNING** if any cloudbuild step fails, then **you must** manually remove all parts of this project from the Kubernetes cluster!)
 
 Cloudbuild steps [look here](cloudbuild.yaml).
+
+## Google Cloud Build Secrets USAGE
+
+[There is the main article about using Google Secrets Manager in Google Cloud Build!](https://cloud.google.com/build/docs/securing-builds/use-secrets)
