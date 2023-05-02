@@ -23,7 +23,8 @@ public interface Dao<T> {
 
     var standardRegistry = serviceBuilder
         .applySetting("hibernate.connection.driver_class", "org.postgresql.Driver")
-        .applySetting("hibernate.connection.url", System.getenv("DB_URL"))
+        .applySetting("hibernate.connection.url", "jdbc:postgresql://postgres:5432/"
+            + System.getenv("POSTGRES_DB"))
         .applySetting("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect")
         .applySetting("hibernate.show_sql", "true")
         .applySetting("hibernate.hbm2ddl.auto", /*"update"*/ "create")

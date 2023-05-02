@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pg
+  namespace: dev-ns
   labels:
     app: pg
 spec:
@@ -9,15 +10,17 @@ spec:
     matchLabels:
       app: pg
   serviceName: postgres
-  #minReadySeconds: 10 # Kubernetes v1.23 [beta]
+  minReadySeconds: 10
   replicas: 1
   revisionHistoryLimit: 2
+
   template:
     metadata:
       labels:
         app: pg
     spec:
       terminationGracePeriodSeconds: 20
+      serviceAccountName: dev-read-sa
       containers:
         - name: pg #DNS_LABLE
           image: postgres:15.1-alpine3.17
@@ -32,26 +35,20 @@ spec:
             limits:
               cpu: 300m
               memory: 250Mi
-          envFrom:
-            - configMapRef:
-                name: pg-config
+          env:
+            - name: POSTGRES_DB
+              value: $DBNAME
+            - name: POSTGRES_USER
+              value: $DBUSERNAME
+            - name: POSTGRES_PASSWORD
+              value: $DBPASS
+            - name: PGDATA
+              value: "/data/pgdata"
+
+
           volumeMounts:
             - name: pg-data
               mountPath: /data
-          livenessProbe:
-            # проверить работоспособность этого зонда не знаю как
-            exec:
-              command:
-                - "/bin/sh"
-                - "-c"
-                - | 
-                - psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 5
-            periodSeconds: 40
-            successThreshold: 1
-
   volumeClaimTemplates:
     - metadata:
         name: pg-data

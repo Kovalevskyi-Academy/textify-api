@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rest-api
+  namespace: dev-ns
   labels:
     app: rest-api
 spec:
@@ -17,6 +18,7 @@ spec:
       labels:
         app: rest-api
     spec:
+      serviceAccountName: dev-read-sa
       containers:
         - name: rest-api
           image: europe-docker.pkg.dev/prod-rest/api-rest/textify-api:latest
@@ -30,6 +32,10 @@ spec:
             limits:
               cpu: 400m
               memory: 300Mi
-          envFrom:
-            - configMapRef:
-                name: pg-config
+          env:
+            - name: POSTGRES_DB
+              value: $DBNAME
+            - name: POSTGRES_USER
+              value: $DBUSERNAME
+            - name: POSTGRES_PASSWORD
+              value: $DBPASS

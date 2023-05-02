@@ -14,7 +14,7 @@ waitTime=3
 while [ "${responseStatus}" != "201" ]
 do
   echo "-> attempt # ${failAttempt}"
-  #printf "WORKDIR: %s" "$(ls ./*/)"
+  printf "WORKDIR: %s" "$(ls ./*/)"
   curl \
     --url "${url}/nodes" \
     --data @./testObjects/node1.json \
