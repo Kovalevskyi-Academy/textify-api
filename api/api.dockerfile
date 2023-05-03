@@ -1,5 +1,5 @@
 # Берем образ линукса с JDK на борту.
-FROM openjdk:17-alpine
+FROM bellsoft/liberica-runtime-container:jre-17-slim-stream-glibc
 
 # install some useful programs for testing container
 #RUN apk update
