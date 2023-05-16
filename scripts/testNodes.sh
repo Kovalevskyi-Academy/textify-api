@@ -4,17 +4,17 @@ set -Eeuo pipefail
 # get url from scripts args
 url=${1}
 
-# Do POST to REST-API /nodes
-printf "\n#Do POST to %s/nodes\n" "${url}"
-actualUuid=null
 
+# Do POST to REST-API /nodes
+actualUuid=null
 responseStatus="no"
 failAttempt=0
-waitTime=3
+waitTime=10
 while [ "${responseStatus}" != "201" ]
 do
+  printf "\n#Do POST to %s/nodes\n" "${url}"
   echo "-> attempt # ${failAttempt}"
-  #printf "WORKDIR: %s" "$(ls ./*/)"
+#  printf "WORKDIR: %s" "$(ls ./*/)"
   curl \
     --url "${url}/nodes" \
     --data @./testObjects/node1.json \
@@ -38,7 +38,7 @@ printf "\nnode1 POST SUCCESS, UUID: %s\n" "$(tr <nodeUUID.txt -d \")"
 # Check POSTed object -> do get
 responseStatus="no"
 failAttempt=0
-waitTime=3
+waitTime=10
 while [ "${responseStatus}" != "200" ]
 do
   actualUuid=$(tr <nodeUUID.txt -d \")

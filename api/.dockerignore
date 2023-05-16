@@ -1,8 +1,8 @@
 # Ignore files
 *.md
 *.iml
-*.mk
 *.dockerfile
+*.xml
 
 # Ignore folders
 src/

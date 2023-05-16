@@ -5,7 +5,16 @@ options:
 
 substitutions:
   # $REPO_NAME means GitHub's repo name. It will be container name
-  _IMAGE: 'europe-docker.pkg.dev/${PROJECT_ID}/api-rest/${REPO_NAME}'
+  _IMAGE: 'europe-docker.pkg.dev/prod-rest/api-rest/textify-api'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/366663102857/secrets/pg-dev-db-name/versions/1
+      env: 'DBNAME'
+    - versionName: projects/366663102857/secrets/pg-dev-pass/versions/1
+      env: 'DBPASS'
+    - versionName: projects/366663102857/secrets/pg-dev-username/versions/1
+      env: 'DBUSERNAME'
 
 steps:
   - name: 'maven:3-eclipse-temurin-17-alpine'
@@ -42,7 +51,7 @@ steps:
     dir: 'api'
 
   # Pull previous our container build & use it in next step
-  - name: 'docker:23.0.0-rc.4-alpine3.17'
+  - name: 'docker:rc-cli'
     id: pull-previous-container
     waitFor: ['build-jar']
     entrypoint: 'sh'
@@ -50,12 +59,13 @@ steps:
     dir: 'api'
 
   # Build new container using layers from previous step.
-  - name: 'docker:23.0.0-rc.4-alpine3.17'
+  - name: 'docker:rc-cli'
     id: build-new-container
     waitFor: ['unpack-jar', 'pull-previous-container']
     args: ['build',
       # $SHORT_SHA is a part of hash of git commit. It will be container tag.
-           '-t', '${_IMAGE}:${SHORT_SHA}',
+           #'-t', '${_IMAGE}:${SHORT_SHA}',
+           '-t', '${_IMAGE}:handle',
            '-t', '${_IMAGE}:latest',
            '--cache-from', '${_IMAGE}:latest',
            '-f', 'api.dockerfile',
@@ -63,33 +73,61 @@ steps:
     dir: 'api'
 
   # Push image to artifact registry
-  - name: 'docker:23.0.0-rc.4-alpine3.17'
+  - name: 'docker:rc-cli'
     id: push-to-GCAR
     waitFor: ['build-new-container']
     args: [ 'push', '--all-tags', '${_IMAGE}']
     dir: 'api'
 
-  # Kubernetes RUN DB
+  # prepare k8b configs
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: prepareDB-secrets
+    waitFor: [ '-' ]
+    entrypoint: 'bash'
+    args:
+      - '-eEuo'
+      - 'pipefail'
+      - '-c'
+      - |-
+        envsubst < ./k8b/db/pg-deploy.yaml >> ./k8b/db/pg-deploy2.yaml; mv ./k8b/db/pg-deploy2.yaml ./k8b/db/pg-deploy.yaml
+    secretEnv: ['DBNAME', 'DBUSERNAME', 'DBPASS']
+
+  #   Kubernetes RUN DB
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: deploy-db
-    waitFor: ['-']
-    args: ['apply',
-           '--filename', './k8b/db/',
-           '--location', 'europe-north1',
-           '--cluster', 'my-autopilot-cluster']
+    waitFor: [ 'prepareDB-secrets' ]
+    args: [ 'apply',
+            '--filename', './k8b/db/',
+            '--location', 'europe-north1',
+            '--cluster', 'my-autopilot-cluster' ]
+
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: test-db
-    waitFor: ['deploy-db']
+    waitFor: [ 'deploy-db' ]
     entrypoint: 'bash'
-    # TODO fix security!
-    args: ['./scripts/test_db.sh']
+    args: [ './scripts/test_db.sh' ]
+    secretEnv: ['DBNAME', 'DBUSERNAME']
+
+
+  # prepare k8b REST configs
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: prepare-REST-secrets
+    waitFor: [ 'push-to-GCAR' ]
+    entrypoint: 'bash'
+    args:
+      - '-eEuo'
+      - 'pipefail'
+      - '-c'
+      - |-
+        envsubst < ./k8b/rest/rest-deploy.yaml >> ./k8b/rest/rest-deploy2.yaml; mv ./k8b/rest/rest-deploy2.yaml ./k8b/rest/rest-deploy.yaml
+    secretEnv: ['DBNAME', 'DBUSERNAME', 'DBPASS']
 
   # Run REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: deploy-rest
     waitFor:
-      - 'push-to-GCAR'
+      - 'prepare-REST-secrets'
       - 'test-db'
     args: ['run',
            '--filename', './k8b/rest/',
@@ -125,5 +163,5 @@ steps:
     args:
       - '-c'
       - |
-          pvc_name=$(kubectl get pvc --selector=$sel -o jsonpath={.items..metadata.name})
-          kubectl delete pvc ${pvc_name}
+          pvc_name=$(kubectl get pvc -n dev-ns --selector=$sel -o jsonpath={.items..metadata.name})
+          kubectl delete pvc ${pvc_name} -n dev-ns

@@ -4,6 +4,8 @@ _**First you should be familiar with Docker. It is base knowledge!**_
 That's our K8b schema:
 ![K8b_schema.png](./screenshots/K8b_schema.png)
 
+## K8B secrets [here!](./externalSecrets.md)
+
 ## Manual GKE Usage from local machine (Learning in the end of this file)
 ## Preparing
 1. Manual (no pkg managers) installing google-cloud-cli, you can use [interactive installer](https://cloud.google.com/sdk/docs/downloads-interactive)
@@ -32,7 +34,7 @@ That's our K8b schema:
   - connect: `psql -U testUSER -d testDB -h 0.0.0.0`
 
 **Also, you can connect to container which running in the pod:**
-- If it's only one container in the pod: `kubectl exec -it POD_NAME -- /bin/sh`
+- If it's only one container in the pod: `kubectl exec -it POD_NAME -n NAMESPACE -- /bin/sh`
 - If there are several containers in the pod: `kubectl exec -it POD_NAME --container CONTAINER_NAME -- /bin/sh`
 
 **How to check PERSISTENT VOLUMES:**

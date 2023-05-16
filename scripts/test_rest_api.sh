@@ -19,7 +19,7 @@ do
     exit 1
   fi
   sleep "${secondsPassed}"s
-  ip=$(kubectl get service rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  ip=$(kubectl get service -n dev-ns rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
   printf "\n#Current ip is: %s\n" "${ip}"
   secondsPassed=$(( "${secondsPassed}" + "${secondsPassed}" ))
 done
