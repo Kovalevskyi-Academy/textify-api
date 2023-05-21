@@ -143,6 +143,25 @@ steps:
             '--location', '${_REGION}',
             '--cluster', '${_CLUSTER}' ]
 
+  # GET external ip for tests
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: get-ip
+    waitFor:
+      - 'deploy-rest'
+    entrypoint: 'bash'
+    args: [ './get_ip.sh' ]
+    dir: 'scripts'
+
+  # Print external ip
+  - name: 'badouralix/curl-jq:debian'
+    id: print-ip
+    waitFor:
+      - 'get-ip'
+    entrypoint: 'bash'
+    args: []
+
+
+
   # Test REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: test-REST-API
