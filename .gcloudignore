@@ -12,5 +12,6 @@ Open_API/
 *.png
 LICENSE
 Makefile
+.gcloudignore
 .gitignore
 Insomnia*
