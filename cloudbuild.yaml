@@ -6,6 +6,8 @@ options:
 substitutions:
   # $REPO_NAME means GitHub's repo name. It will be container name
   _IMAGE: 'europe-docker.pkg.dev/prod-rest/api-rest/textify-api'
+  _CLUSTER: 'dev-rest-cluster'
+  _REGION: 'europe-west4'
 
 availableSecrets:
   secretManager:
@@ -53,7 +55,7 @@ steps:
   # Pull previous our container build & use it in next step
   - name: 'docker:rc-cli'
     id: pull-previous-container
-    waitFor: ['build-jar']
+    waitFor: ['-']
     entrypoint: 'sh'
     args: ['-c', 'docker pull ${_IMAGE}:latest || exit 0']
     dir: 'api'
@@ -81,11 +83,11 @@ steps:
   #   Kubernetes create namespace
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: deploy-ns
-    waitFor: [ 'push-to-GCAR' ]
+    waitFor: [ '-' ]
     args: [ 'apply',
             '--filename', './k8b/dev-ns.yaml',
-            '--location', 'europe-west4',
-            '--cluster', 'dev-rest-cluster' ]
+            '--location', '${_REGION}',
+            '--cluster', '${_CLUSTER}' ]
 
   # prepare k8b configs
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -106,8 +108,8 @@ steps:
     waitFor: [ 'prepareDB-secrets', 'deploy-ns' ]
     args: [ 'apply',
             '--filename', './k8b/db/',
-            '--location', 'europe-west4',
-            '--cluster', 'dev-rest-cluster' ]
+            '--location', '${_REGION}',
+            '--cluster', '${_CLUSTER}' ]
 
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -121,7 +123,7 @@ steps:
   # prepare k8b REST configs
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: prepare-REST-secrets
-    waitFor: [ 'push-to-GCAR' ]
+    waitFor: [ '-' ]
     entrypoint: 'bash'
     args:
       - '-eEuo'
@@ -131,7 +133,7 @@ steps:
         envsubst < ./k8b/rest/rest-deploy.yaml >> ./k8b/rest/rest-deploy2.yaml; mv ./k8b/rest/rest-deploy2.yaml ./k8b/rest/rest-deploy.yaml
     secretEnv: ['DBNAME', 'DBUSERNAME', 'DBPASS']
 
-  # Run REST-API
+  # Deploy REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: deploy-rest
     waitFor:
@@ -139,8 +141,8 @@ steps:
       - 'test-db'
     args: ['run',
            '--filename', './k8b/rest/',
-           '--location', 'europe-west4',
-           '--cluster', 'dev-rest-cluster' ]
+           '--location', '${_REGION}',
+           '--cluster', '${_CLUSTER}' ]
 
   # Test REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -156,22 +158,26 @@ steps:
     id: K8B-delete-REST-API
     waitFor: [ 'test-REST-API' ]
     entrypoint: 'kubectl'
-    args: [ 'delete', '--filename', './k8b/rest/' ]
+    args: [ 'delete',
+            '--filename', './k8b/rest/',
+            '--location', '${_REGION}',
+            '--cluster', '${_CLUSTER}']
 
   # Delete Db from cluster
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: K8B-delete-postgres
     waitFor: ['test-REST-API']
     entrypoint: 'kubectl'
-    args: ['delete', '--filename', './k8b/db/']
+    args: ['delete',
+           '--filename', './k8b/db/',
+           '--location', '${_REGION}',
+           '--cluster', '${_CLUSTER}']
 
-  # Delete PERSISTENT VOLUME
+  #   delete the namespace
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    id: K8B-delete-persistent-volume
-    waitFor: ['test-REST-API']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-          pvc_name=$(kubectl get pvc -n dev-ns --selector=$sel -o jsonpath={.items..metadata.name})
-          kubectl delete pvc ${pvc_name} -n dev-ns
+    id: delete-ns
+    waitFor: [ 'K8B-delete-postgres' ]
+    args: [ 'delete',
+            '--filename', './k8b/dev-ns.yaml',
+            '--location', '${_REGION}',
+            '--cluster', '${_CLUSTER}' ]
