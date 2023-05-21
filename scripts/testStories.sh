@@ -14,11 +14,10 @@ while [ "${responseStatus}" != "201" ]; do
   echo "-> attempt # ${failAttempt}"
   curl \
     --url "${url}/stories" \
-    -X POST \
-    -d @./testObjects/story1.json \
+    --data @./testObjects/story1.json \
     -H "Content-Type: application/json" \
     -w "%{http_code}" \
-    --m "${waitTime}" \
+    -m "${waitTime}" \
     -o storyUUID.txt \
     -v >responceStory.txt ||
     true #2>/dev/null
