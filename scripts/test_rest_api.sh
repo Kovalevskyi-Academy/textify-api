@@ -6,21 +6,8 @@ set -Eeuo pipefail
 # apk add --no-cache jq -q
 #actualResponse=$(curl "http://${ip}:8080/messages/5" -s 2>/dev/null | jq -r '.message')
 #jq '.nodeTitle = "UPGRADED title of first node"' temp.json > temp$.json && mv temp$.json temp.json
-printf "THIS IS IP FROM FILE: %s\n" "$(tr </workspace/ip.txt)"
-ip=0
-secondsPassed=1
-failTime=20
-while [[ ! "${ip}" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-  if [ "${secondsPassed}" -ge "${failTime}" ]; then
-    echo "After ${failTime} seconds I fill fail connection with service!"
-    exit 1
-  fi
-  sleep "${secondsPassed}"s
-  ip=$(kubectl get service -n dev-ns rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  printf "\n#Current ip is: %s\n" "${ip}"
-  secondsPassed=$(("${secondsPassed}" + "${secondsPassed}"))
-done
-
+printf "THIS IS IP FROM FILE: %s\n" "$(tr </workspace/ip.txt -d \")"
+ip=$(tr </workspace/ip.txt -d \")
 url="http://${ip}:8080"
 
 # REST check availability

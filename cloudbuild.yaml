@@ -157,7 +157,7 @@ steps:
   - name: 'badouralix/curl-jq:debian'
     id: test-REST-API
     waitFor:
-      - 'deploy-rest'
+      - 'get-ip'
     entrypoint: 'bash'
     args: [ './test_rest_api.sh' ]
     dir: 'scripts'
