@@ -18,7 +18,6 @@ spec:
       labels:
         app: rest-api
     spec:
-      serviceAccountName: dev-read-sa
       containers:
         - name: rest-api
           image: europe-docker.pkg.dev/prod-rest/api-rest/textify-api:latest
@@ -27,11 +26,11 @@ spec:
               containerPort: 8080
           resources:
             requests:
-              cpu: 200m
-              memory: 250Mi
+              cpu: 250m
+              memory: 500Mi
             limits:
-              cpu: 400m
-              memory: 300Mi
+              cpu: 500m
+              memory: 600Mi
           env:
             - name: POSTGRES_DB
               value: $DBNAME
