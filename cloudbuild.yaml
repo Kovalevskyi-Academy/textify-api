@@ -64,8 +64,7 @@ steps:
     waitFor: ['unpack-jar', 'pull-previous-container']
     args: ['build',
       # $SHORT_SHA is a part of hash of git commit. It will be container tag.
-           #'-t', '${_IMAGE}:${SHORT_SHA}',
-           '-t', '${_IMAGE}:handle',
+           '-t', '${_IMAGE}:${SHORT_SHA}',
            '-t', '${_IMAGE}:latest',
            '--cache-from', '${_IMAGE}:latest',
            '-f', 'api.dockerfile',
@@ -78,6 +77,15 @@ steps:
     waitFor: ['build-new-container']
     args: [ 'push', '--all-tags', '${_IMAGE}']
     dir: 'api'
+
+  #   Kubernetes create namespace
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: deploy-ns
+    waitFor: [ 'push-to-GCAR' ]
+    args: [ 'apply',
+            '--filename', './k8b/dev-ns.yaml',
+            '--location', 'europe-west4',
+            '--cluster', 'dev-rest-cluster' ]
 
   # prepare k8b configs
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -95,11 +103,11 @@ steps:
   #   Kubernetes RUN DB
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: deploy-db
-    waitFor: [ 'prepareDB-secrets' ]
+    waitFor: [ 'prepareDB-secrets', 'deploy-ns' ]
     args: [ 'apply',
             '--filename', './k8b/db/',
-            '--location', 'europe-north1',
-            '--cluster', 'my-autopilot-cluster' ]
+            '--location', 'europe-west4',
+            '--cluster', 'dev-rest-cluster' ]
 
   # Test DB in pod
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -131,8 +139,8 @@ steps:
       - 'test-db'
     args: ['run',
            '--filename', './k8b/rest/',
-           '--location', 'europe-north1',
-           '--cluster', 'my-autopilot-cluster' ]
+           '--location', 'europe-west4',
+           '--cluster', 'dev-rest-cluster' ]
 
   # Test REST-API
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -149,12 +157,14 @@ steps:
     waitFor: [ 'test-REST-API' ]
     entrypoint: 'kubectl'
     args: [ 'delete', '--filename', './k8b/rest/' ]
+
   # Delete Db from cluster
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: K8B-delete-postgres
     waitFor: ['test-REST-API']
     entrypoint: 'kubectl'
     args: ['delete', '--filename', './k8b/db/']
+
   # Delete PERSISTENT VOLUME
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: K8B-delete-persistent-volume
