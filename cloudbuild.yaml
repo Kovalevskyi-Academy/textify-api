@@ -172,5 +172,6 @@ steps:
   - name: 'gcr.io/cloud-builders/gke-deploy'
     id: delete-ns
     waitFor: [ 'test-REST-API' ]
+    entrypoint: 'kubectl'
     args: [ 'delete',
             '--filename', './k8b/dev-ns.yaml' ]
