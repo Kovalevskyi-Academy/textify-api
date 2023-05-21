@@ -12,6 +12,11 @@ waitTime=10
 while [ "${responseStatus}" != "201" ]; do
   printf "\n#Do POST to %s/stories\n" "${url}"
   echo "-> attempt # ${failAttempt}"
+  newTitle="POSTed STORY. Attempt: ${failAttempt}"
+  storyDescription="New random STORY DESCRIPTION: $(echo $RANDOM | base64 | head -c 20; echo)"
+  jq -M '. + {storyTitle: $ARGS.positional[0], storyDescription: $ARGS.positional[1]}' \
+  ./testObjects/story1.json --args "${newTitle}" "${storyDescription}" > tmp.json &&
+  mv tmp.json ./testObjects/story1.json
   curl \
     --url "${url}/stories" \
     --data @./testObjects/story1.json \

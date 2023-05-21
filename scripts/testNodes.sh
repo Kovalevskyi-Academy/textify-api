@@ -12,6 +12,11 @@ waitTime=10
 while [ "${responseStatus}" != "201" ]; do
   printf "\n#Do POST to %s/nodes\n" "${url}"
   echo "-> attempt # ${failAttempt}"
+  newTitle="POSTed NODE. Attempt: ${failAttempt}"
+  nwContent="New random content: $(echo $RANDOM | base64 | head -c 20; echo)"
+  jq -M '. + {nodeTitle: $ARGS.positional[0], content: $ARGS.positional[1]}' \
+  ./testObjects/node1.json --args "${newTitle}" "${nwContent}" > tmp.json &&
+  mv tmp.json ./testObjects/node1.json
   #  printf "WORKDIR: %s" "$(ls ./*/)"
   curl \
     --url "${url}/nodes" \
