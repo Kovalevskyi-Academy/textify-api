@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # apk add --no-cache jq -q
 #actualResponse=$(curl "http://${ip}:8080/messages/5" -s 2>/dev/null | jq -r '.message')
 #jq '.nodeTitle = "UPGRADED title of first node"' temp.json > temp$.json && mv temp$.json temp.json
-
+printf "THIS IS IP FROM FILE: %s\n" "$(tr </workspace/ip.txt)"
 ip=0
 secondsPassed=1
 failTime=20

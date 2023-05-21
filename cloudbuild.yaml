@@ -152,18 +152,9 @@ steps:
     args: [ './get_ip.sh' ]
     dir: 'scripts'
 
-  # Print external ip
-  - name: 'badouralix/curl-jq:debian'
-    id: print-ip
-    waitFor:
-      - 'get-ip'
-    entrypoint: 'bash'
-    args: []
-
-
 
   # Test REST-API
-  - name: 'gcr.io/cloud-builders/gke-deploy'
+  - name: 'badouralix/curl-jq:debian'
     id: test-REST-API
     waitFor:
       - 'deploy-rest'
