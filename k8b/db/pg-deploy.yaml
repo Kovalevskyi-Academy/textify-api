@@ -19,8 +19,11 @@ spec:
       labels:
         app: pg
     spec:
+      volumes:
+        - name: pg-pvc
+          persistentVolumeClaim:
+            claimName: pg-pvc
       terminationGracePeriodSeconds: 20
-      serviceAccountName: dev-read-sa
       containers:
         - name: pg #DNS_LABLE
           image: postgres:15.1-alpine3.17
@@ -31,10 +34,10 @@ spec:
           resources:
             requests:
               cpu: 250m
-              memory: 500Mi
+              memory: 250Mi
             limits:
               cpu: 500m
-              memory: 600Mi
+              memory: 512Mi
           env:
             - name: POSTGRES_DB
               value: $DBNAME
@@ -44,16 +47,6 @@ spec:
               value: $DBPASS
             - name: PGDATA
               value: "/data/pgdata"
-
-
           volumeMounts:
-            - name: pg-data
+            - name: pg-pvc
               mountPath: /data
-  volumeClaimTemplates:
-    - metadata:
-        name: pg-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 50Mi
