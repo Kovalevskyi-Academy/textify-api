@@ -48,7 +48,7 @@ steps:
     id: unpack-jar
     waitFor: [ 'build-jar' ]
     entrypoint: 'bash'
-    args: [ '-c', 'mkdir -p target/dependency && (cd target/dependency; jar -xfv ../*.jar) && echo "jar unpack success"' ]
+    args: [ '-c', 'mkdir -p mkdir target/extracted && java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted && echo "jar unpack success"' ]
     dir: 'api'
 
   # Pull previous our container build & use it in next step

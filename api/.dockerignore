@@ -9,4 +9,4 @@ src/
 target/
 
 # Folders not ignored
-!target/dependency/
+!target/extracted/

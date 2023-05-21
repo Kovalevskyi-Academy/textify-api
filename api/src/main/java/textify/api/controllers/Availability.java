@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class Availability {
 
   @GetMapping(path = "/test")
-  public ResponseEntity<?> isServerOnline() {
-    return new ResponseEntity<>(HttpStatus.OK);
+  public ResponseEntity<String> isServerOnline() {
+    return new ResponseEntity<>("REST API IS STARTED", HttpStatus.OK);
   }
 
 }
