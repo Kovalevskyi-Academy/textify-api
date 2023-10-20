@@ -7,6 +7,7 @@ substitutions:
   _IMAGE: 'europe-docker.pkg.dev/prod-rest/api-rest/textify-api'
   _CLUSTER: 'dev-rest-cluster'
   _REGION: 'europe-west4'
+  _LATEST_TAG_NAME: 'dev'
 
 availableSecrets:
   secretManager:
