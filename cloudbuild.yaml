@@ -64,7 +64,7 @@ steps:
   - name: 'docker:rc-cli'
     id: build-new-container
     waitFor: [ 'unpack-jar', 'pull-previous-container' ]
-    args: [ 'build', '--push',
+    args: [ 'build', '--push', # first push method
             '-t', '${_IMAGE}:${SHORT_SHA}',
             '-t', '${_IMAGE}:${BRANCH_NAME}',
             '-t', '${_IMAGE}:${_LATEST_TAG_NAME}',
