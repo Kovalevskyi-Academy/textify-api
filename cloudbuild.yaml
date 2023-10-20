@@ -7,7 +7,7 @@ substitutions:
   _IMAGE: 'europe-docker.pkg.dev/prod-rest/api-rest/textify-api'
   _CLUSTER: 'dev-rest-cluster'
   _REGION: 'europe-west4'
-  _LATEST_TAG_NAME: 'dev'
+  _LATEST_TAG_NAME: 'latest'
 
 availableSecrets:
   secretManager:
@@ -64,7 +64,7 @@ steps:
   - name: 'docker:rc-cli'
     id: build-new-container
     waitFor: [ 'unpack-jar', 'pull-previous-container' ]
-    args: [ 'build',
+    args: [ 'build', '--push',
             '-t', '${_IMAGE}:${SHORT_SHA}',
             '-t', '${_IMAGE}:${BRANCH_NAME}',
             '-t', '${_IMAGE}:${_LATEST_TAG_NAME}',
