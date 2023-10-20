@@ -57,7 +57,6 @@ public class Starter {
     System.out.println("Second actual story: \n" + actualStory2);
     System.out.println(
         "Equals actual SECOND STORY vs EXPECTED: " + expectedSecondStory.equals(actualStory2));
-
     System.out.println("test UPDATE");
     System.out.println("Try to update stories!");
     try {

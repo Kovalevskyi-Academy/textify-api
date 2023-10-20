@@ -22,8 +22,9 @@ while [ "${responseStatus}" != "200" ]; do
   responseStatus=$(<responce.txt)
   printf "\n responseStatus: %s\n" "${responseStatus}"
   failAttempt=$(("${failAttempt}" + 1))
-  if [ "${failAttempt}" -gt 10 ]; then
-    echo "REST check availability FAILED after ${failAttempt} !"
+  if "${failAttempt}" -gt 10
+  then
+    echo "REST simple check availability FAILED after ${failAttempt} !"
     exit 1
   fi
 done

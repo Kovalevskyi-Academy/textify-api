@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-ip=0
+ip=$(kubectl get service -n dev-ns rest-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 secondsPassed=1
 failTime=20
 while [[ ! "${ip}" =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do

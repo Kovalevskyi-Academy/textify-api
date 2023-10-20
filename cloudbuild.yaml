@@ -64,10 +64,12 @@ steps:
     id: build-new-container
     waitFor: [ 'unpack-jar', 'pull-previous-container' ]
     args: [ 'build',
-      # $SHORT_SHA is a part of hash of git commit. It will be container tag.
             '-t', '${_IMAGE}:${SHORT_SHA}',
-            '-t', '${_IMAGE}:latest',
-            '--cache-from', '${_IMAGE}:latest',
+            '-t', '${_IMAGE}:${BRANCH_NAME}',
+            '-t', '${_IMAGE}:${_LATEST_TAG_NAME}',
+            '--cache-from', '${_IMAGE}:${_LATEST_TAG_NAME}',
+            '--build-arg', 'BUILDKIT_INLINE_CACHE=1', # enable cache
+            '--progress', 'plain', # Give more build process details
             '-f', 'api.dockerfile',
             '.' ]
     dir: 'api'

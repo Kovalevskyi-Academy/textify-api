@@ -10,4 +10,7 @@
 
 — Be careful: any little typo produce a huge bud-hart!
 
+Інструкції від гугла для доступу до секретів з середини GKE https://cloud.google.com/secret-manager/docs/accessing-the-api#oauth-scopes
+
+
 
