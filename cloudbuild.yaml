@@ -68,6 +68,8 @@ steps:
             '-t', '${_IMAGE}:${SHORT_SHA}',
             '-t', '${_IMAGE}:${BRANCH_NAME}',
             '-t', '${_IMAGE}:${_LATEST_TAG_NAME}',
+            '--label', 'git-commit=${SHORT_SHA}',
+            '--label', 'Build=${BUILD_ID}',
             '--cache-from', '${_IMAGE}:${_LATEST_TAG_NAME}',
             '--build-arg', 'BUILDKIT_INLINE_CACHE=1', # enable cache
             '--progress', 'plain', # Give more build process details
